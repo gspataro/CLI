@@ -54,9 +54,9 @@ final class OptionsCollection
         }
 
         if (!empty($args)) {
-            for ($i = 0; $i < count($args); $i++) {
-                $args[$i]['required'] = $args[$i]['required'] ?? false;
-                $args[$i]['manpage'] = $args[$i]['manpage'] ?? null;
+            foreach ($args as $argName => $arg) {
+                $args[$argName]['required'] = $arg['required'] ?? false;
+                $args[$argName]['manpage'] = $arg['manpage'] ?? null;
             }
         }
 
