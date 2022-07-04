@@ -28,28 +28,17 @@ final class OptionsCollection
      * Add an option to the collection
      *
      * @param string $tag
-     * @param array $callback
+     * @param callable $callback
      * @param array $args
      * @param string|null $manpage
      * @return void
      */
 
-    public function add(string $tag, array $callback, array $args = [], ?string $manpage = null): void
+    public function add(string $tag, callable $callback, array $args = [], ?string $manpage = null): void
     {
         if ($this->has($tag)) {
             throw new Exception\OptionFoundException(
                 "An option named '{$tag}' already exists in the collection."
-            );
-        }
-
-        if (
-            !isset($callback[0]) ||
-            !isset($callback[1]) ||
-            !class_exists($callback[0]) ||
-            !method_exists($callback[0], $callback[1])
-        ) {
-            throw new Exception\InvalidOptionCallbackException(
-                "Invalid callback provided to option '{$tag}'. A callback must refer to an existing class and method."
             );
         }
 
