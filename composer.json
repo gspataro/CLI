@@ -2,7 +2,7 @@
     "name": "gspataro/cli",
     "description": "A PHP based CLI component",
     "keywords": ["cli"],
-    "version": "0.1.0",
+    "version": "0.1.1",
     "authors": [
         {
             "name": "Giuseppe Spataro",
