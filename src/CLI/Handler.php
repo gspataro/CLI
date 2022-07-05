@@ -44,7 +44,7 @@ final class Handler
             $this->response->print("");
         }
 
-        $this->response->print("*help*\tList available options");
+        $this->response->print("*_help_*\t\t_List available options_");
     }
 
     /**
