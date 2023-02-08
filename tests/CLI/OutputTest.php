@@ -5,17 +5,17 @@ namespace GSpataro\Test;
 use GSpataro\CLI;
 use PHPUnit\Framework\TestCase;
 
-final class ResponseTest extends TestCase
+final class OutputTest extends TestCase
 {
     /**
-     * Get an instance of Response
+     * Get an instance of Output
      *
-     * @return CLI\Response
+     * @return CLI\Output
      */
 
-    public function getResponse(): CLI\Response
+    public function getResponse(): CLI\Output
     {
-        return new CLI\Response();
+        return new CLI\Output();
     }
 
     /**
@@ -42,66 +42,66 @@ final class ResponseTest extends TestCase
     }
 
     /**
-     * @testdox Test Response::print() method
-     * @covers Response::print
+     * @testdox Test Output::print() method
+     * @covers Output::print
      * @return void
      */
 
     public function testPrint(): void
     {
         $text = "This is a test!";
-        $response = $this->getResponse();
+        $output = $this->getResponse();
 
         $this->expectOutputString("{$text}\n");
-        $response->print($text);
+        $output->print($text);
     }
 
     /**
-     * @testdox Test Response::print() without final new line
-     * @covers Response::print
+     * @testdox Test Output::print() without final new line
+     * @covers Output::print
      * @return void
      */
 
     public function testPrintNoNl(): void
     {
         $text = "This is a test!";
-        $response = $this->getResponse();
+        $output = $this->getResponse();
 
         $this->expectOutputString($text);
-        $response->print(
+        $output->print(
             text: $text,
             finalNewLine: false
         );
     }
 
     /**
-     * @testdox Test Response::print() with formatting
-     * @covers Response::print
+     * @testdox Test Output::print() with formatting
+     * @covers Output::print
      * @return void
      */
 
     public function testPrintWithFormatting(): void
     {
         $text = $this->getMockupText();
-        $response = $this->getResponse();
+        $output = $this->getResponse();
 
         $this->expectOutputString("{$text['formatted']}\n");
-        $response->print($text['raw']);
+        $output->print($text['raw']);
     }
 
     /**
-     * @testdox Test Response::print() without formatting
-     * @covers Response::print
+     * @testdox Test Output::print() without formatting
+     * @covers Output::print
      * @return void
      */
 
     public function testPrintWithoutFormatting(): void
     {
         $text = $this->getMockupText();
-        $response = $this->getResponse();
+        $output = $this->getResponse();
 
         $this->expectOutputString("{$text['raw']}\n");
-        $response->print(
+        $output->print(
             text: $text['raw'],
             raw: true
         );

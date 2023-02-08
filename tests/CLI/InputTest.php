@@ -5,7 +5,7 @@ namespace GSpataro\Test;
 use GSpataro\CLI;
 use PHPUnit\Framework\TestCase;
 
-final class RequestTest extends TestCase
+final class InputTest extends TestCase
 {
     /**
      * @testdox Test object initialization
@@ -14,15 +14,15 @@ final class RequestTest extends TestCase
 
     public function testInitialization(): void
     {
-        $request = new CLI\Request([
+        $input = new CLI\Input([
             "index.php",
             "optionName",
             "argumentOne",
             "argumentTwo"
         ]);
 
-        $this->assertEquals("index.php", $request->getScriptName());
-        $this->assertEquals("optionName", $request->getOptionName());
-        $this->assertEquals(["argumentOne", "argumentTwo"], $request->getArgs());
+        $this->assertEquals("index.php", $input->getScriptName());
+        $this->assertEquals("optionName", $input->getOptionName());
+        $this->assertEquals(["argumentOne", "argumentTwo"], $input->getArgs());
     }
 }

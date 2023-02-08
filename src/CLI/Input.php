@@ -2,7 +2,7 @@
 
 namespace GSpataro\CLI;
 
-final class Request
+final class Input
 {
     /**
      * Store script name
@@ -29,7 +29,7 @@ final class Request
     private readonly array $args;
 
     /**
-     * Initialize Request object
+     * Initialize Input object
      *
      * @param array $argv
      */

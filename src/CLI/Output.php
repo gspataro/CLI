@@ -2,7 +2,7 @@
 
 namespace GSpataro\CLI;
 
-final class Response
+final class Output
 {
     /**
      * Store regular expressions for ANSI text formatting
