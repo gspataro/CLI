@@ -1,6 +1,6 @@
 <?php
 
-namespace GSpataro\Test;
+namespace GSpataro\Test\Utilities;
 
 final class Controller
 {

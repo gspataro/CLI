@@ -3,7 +3,7 @@
 namespace GSpataro\Test;
 
 use GSpataro\CLI;
-use GSpataro\Test\Controller;
+use GSpataro\Test\Utilities\Controller;
 use PHPUnit\Framework\TestCase;
 
 final class OptionsCollectionTest extends TestCase
