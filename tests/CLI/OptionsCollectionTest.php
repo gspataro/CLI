@@ -66,12 +66,12 @@ final class OptionsCollectionTest extends TestCase
         $collection = new CLI\OptionsCollection();
 
         $this->assertFalse($collection->has("test"));
-        $collection->add("test", [Controller::class, "method"], []);
+        $collection->add("test", [new Controller(), "method"], []);
         $this->assertTrue($collection->has("test"));
 
         $options = $this->readPrivateProperty($collection, "options");
         $this->assertEquals($options['test'], [
-            "callback" => [Controller::class, "method"],
+            "callback" => [new Controller(), "method"],
             "args" => [],
             "manpage" => null
         ]);
@@ -88,23 +88,8 @@ final class OptionsCollectionTest extends TestCase
         $this->expectException(CLI\Exception\OptionFoundException::class);
 
         $collection = new CLI\OptionsCollection();
-        $collection->add("test", [Controller::class, "method"], []);
-        $collection->add("test", [Controller::class, "method"], []);
-    }
-
-    /**
-     * @testdox Test OptionsCollection::add() method with invalid callback
-     * @covers OptionsCollection::add
-     * @return void
-     */
-
-    public function testAddInvalidCallback(): void
-    {
-        $this->expectException(CLI\Exception\InvalidOptionCallbackException::class);
-
-        $collection = new CLI\OptionsCollection();
-        $this->assertFalse($collection->has("test"));
-        $collection->add("test", [], []);
+        $collection->add("test", [new Controller(), "method"], []);
+        $collection->add("test", [new Controller(), "method"], []);
     }
 
     /**
