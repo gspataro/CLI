@@ -2,18 +2,18 @@
 
 use GSpataro\CLI\Handler;
 use GSpataro\CLI\OptionsCollection;
-use GSpataro\CLI\Request;
-use GSpataro\CLI\Response;
+use GSpataro\CLI\Input;
+use GSpataro\CLI\Output;
 
 require_once __DIR__ . "/bootstrap.php";
 
 $options = new OptionsCollection();
-$request = new Request($argv);
-$response = new Response();
+$request = new Input($argv);
+$response = new Output();
 
 $options->feed([
     "set" => [
-        "callback" => function (Request $request, Response $response, array $args) {
+        "callback" => function (Input $request, Output $response, array $args) {
             $response->print("key: {$args['key']}");
             $response->print("value: {$args['value']}");
             $response->print("#Configuration updated successfully!#");
@@ -31,7 +31,7 @@ $options->feed([
         "manpage" => "Update a configuration value"
     ],
     "build" => [
-        "callback" => function (Request $request, Response $response, array $args) {
+        "callback" => function (Input $request, Output $response, array $args) {
             $response->print("Under construction...");
         },
         "args" => [
