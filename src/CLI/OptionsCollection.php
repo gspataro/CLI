@@ -44,8 +44,14 @@ final class OptionsCollection
 
         if (!empty($args)) {
             foreach ($args as $argName => $arg) {
-                $args[$argName]['required'] = $arg['required'] ?? false;
-                $args[$argName]['manpage'] = $arg['manpage'] ?? null;
+                $key = is_array($arg) ? $argName : $arg;
+
+                $args[$key]['required'] = $arg['required'] ?? false;
+                $args[$key]['manpage'] = $arg['manpage'] ?? null;
+
+                if (!is_array($arg)) {
+                    unset($args[$argName]);
+                }
             }
         }
 
