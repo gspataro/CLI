@@ -9,14 +9,14 @@ require_once __DIR__ . "/bootstrap.php";
 
 $options = new OptionsCollection();
 $request = new Input($argv);
-$response = new Output();
+$output = new Output();
 
 $options->feed([
     "set" => [
-        "callback" => function (Input $request, Output $response, array $args) {
-            $response->print("key: {$args['key']}");
-            $response->print("value: {$args['value']}");
-            $response->print("#Configuration updated successfully!#");
+        "callback" => function (Input $input, Output $output, array $args) {
+            $output->print("key: {$args['key']}");
+            $output->print("value: {$args['value']}");
+            $output->print("#Configuration updated successfully!#");
         },
         "args" => [
             "key" => [
@@ -31,8 +31,8 @@ $options->feed([
         "manpage" => "Update a configuration value"
     ],
     "build" => [
-        "callback" => function (Input $request, Output $response, array $args) {
-            $response->print("Under construction...");
+        "callback" => function (Input $input, Output $output, array $args) {
+            $output->print("Under construction...");
         },
         "args" => [
             "mode" => [
@@ -41,8 +41,16 @@ $options->feed([
             ]
         ],
         "manpage" => "Execute build"
-    ]
+    ],
+    "test" => [
+        "callback" => fn(Input $input, Output $output, $args) => $output->print("Logged in as {$args['username']}:{$args['password']}!"),
+        "args" => [
+            "username",
+            "password"
+        ],
+        "manpage" => "Execute build"
+    ],
 ]);
 
-$handler = new Handler($options, $request, $response);
+$handler = new Handler($options, $request, $output);
 $handler->deploy();
