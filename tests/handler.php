@@ -8,7 +8,7 @@ use GSpataro\CLI\Output;
 require_once __DIR__ . "/bootstrap.php";
 
 $options = new OptionsCollection();
-$request = new Input($argv);
+$input = new Input($argv);
 $output = new Output();
 
 $options->feed([
@@ -52,5 +52,5 @@ $options->feed([
     ],
 ]);
 
-$handler = new Handler($options, $request, $output);
+$handler = new Handler($options, $input, $output);
 $handler->deploy();
