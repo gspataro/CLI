@@ -4,6 +4,6 @@ namespace GSpataro\CLI\Exception;
 
 use Exception;
 
-class OptionNotFoundException extends Exception
+class CommandFoundException extends Exception
 {
 }

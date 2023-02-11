@@ -4,6 +4,6 @@ namespace GSpataro\CLI\Exception;
 
 use Exception;
 
-class InvalidOptionCallbackException extends Exception
+class InvalidCommandCallbackException extends Exception
 {
 }

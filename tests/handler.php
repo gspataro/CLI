@@ -1,17 +1,17 @@
 <?php
 
 use GSpataro\CLI\Handler;
-use GSpataro\CLI\OptionsCollection;
+use GSpataro\CLI\CommandsCollection;
 use GSpataro\CLI\Input;
 use GSpataro\CLI\Output;
 
 require_once __DIR__ . "/bootstrap.php";
 
-$options = new OptionsCollection();
+$commands = new CommandsCollection();
 $input = new Input($argv);
 $output = new Output();
 
-$options->feed([
+$commands->feed([
     "set" => [
         "callback" => function (Input $input, Output $output, array $args) {
             $output->print("key: {$args['key']}");
@@ -52,5 +52,5 @@ $options->feed([
     ],
 ]);
 
-$handler = new Handler($options, $input, $output);
+$handler = new Handler($commands, $input, $output);
 $handler->deploy();

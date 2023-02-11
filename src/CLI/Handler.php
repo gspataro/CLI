@@ -7,34 +7,34 @@ final class Handler
     /**
      * Initialize Handler object
      *
-     * @param OptionsCollection $options
+     * @param CommandsCollection $commands
      * @param Input $input
      * @param Output $output
      */
 
     public function __construct(
-        private OptionsCollection $options,
+        private CommandsCollection $commands,
         private Input $input,
         private Output $output
     ) {
     }
 
     /**
-     * Generate options manpage
+     * Generate commands manpage
      *
      * @return void
      */
 
     public function printManpage(): void
     {
-        $this->output->print("Usage: {$this->input->getScriptName()} *_option_* <args>");
+        $this->output->print("Usage: {$this->input->getScriptName()} *_command_* <args>");
         $this->output->print("");
-        $this->output->print("Available options:");
+        $this->output->print("Available commands:");
 
-        foreach ($this->options->getAll() as $optionName => $option) {
-            $this->output->print("*_{$optionName}_*\t\t_{$option['manpage']}_");
+        foreach ($this->commands->getAll() as $commandName => $command) {
+            $this->output->print("*_{$commandName}_*\t\t_{$command['manpage']}_");
 
-            foreach ($option['args'] as $argName => $arg) {
+            foreach ($command['args'] as $argName => $arg) {
                 $separator = is_null($arg['manpage']) ? null : " ";
                 $this->output->print("<{$argName}>\t\t{$arg['manpage']}" . (
                     $arg['required'] ? "{$separator}(required)" : null
@@ -44,28 +44,28 @@ final class Handler
             $this->output->print("");
         }
 
-        $this->output->print("*_help_*\t\t_List available options_");
+        $this->output->print("*_help_*\t\t_List available commands_");
     }
 
     /**
-     * Start the input handling process and execute requested option callback
+     * Start the input handling process and execute requested command callback
      *
      * @return void
      */
 
     public function deploy(): void
     {
-        if ($this->input->getOptionName() == "help" || !$this->options->has($this->input->getOptionName())) {
+        if ($this->input->getCommandName() == "help" || !$this->commands->has($this->input->getCommandName())) {
             $this->printManpage();
             return;
         }
 
-        $optionName = $this->input->getOptionName();
-        $option = $this->options->get($optionName);
+        $commandName = $this->input->getCommandName();
+        $command = $this->commands->get($commandName);
         $args = [];
         $i = 0;
 
-        foreach ($option['args'] as $argName => $params) {
+        foreach ($command['args'] as $argName => $params) {
             if (!isset($this->input->getArgs()[$i]) && $params['required']) {
                 $this->printManpage();
                 return;
@@ -75,7 +75,7 @@ final class Handler
             $i++;
         }
 
-        call_user_func_array($option['callback'], [
+        call_user_func_array($command['callback'], [
             "input" => $this->input,
             "output" => $this->output,
             "args" => $args

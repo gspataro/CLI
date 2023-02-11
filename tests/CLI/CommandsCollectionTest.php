@@ -6,7 +6,7 @@ use GSpataro\CLI;
 use GSpataro\Test\Utilities\Controller;
 use PHPUnit\Framework\TestCase;
 
-final class OptionsCollectionTest extends TestCase
+final class CommandsCollectionTest extends TestCase
 {
     /**
      * Read the content of a private property
@@ -44,33 +44,33 @@ final class OptionsCollectionTest extends TestCase
     }
 
     /**
-     * @testdox Test OptionsCollection::has() method
-     * @covers OptionsCollection::has
+     * @testdox Test CommandsCollection::has() method
+     * @covers CommandsCollection::has
      * @return void
      */
 
     public function testHas(): void
     {
-        $collection = new CLI\OptionsCollection();
+        $collection = new CLI\CommandsCollection();
         $this->assertFalse($collection->has("nonexisting"));
     }
 
     /**
-     * @testdox Test OptionsCollection::add() method
-     * @covers OptionsCollection::add
+     * @testdox Test CommandsCollection::add() method
+     * @covers CommandsCollection::add
      * @return void
      */
 
     public function testAdd(): void
     {
-        $collection = new CLI\OptionsCollection();
+        $collection = new CLI\CommandsCollection();
 
         $this->assertFalse($collection->has("test"));
         $collection->add("test", [new Controller(), "method"], []);
         $this->assertTrue($collection->has("test"));
 
-        $options = $this->readPrivateProperty($collection, "options");
-        $this->assertEquals($options['test'], [
+        $commands = $this->readPrivateProperty($collection, "commands");
+        $this->assertEquals($commands['test'], [
             "callback" => [new Controller(), "method"],
             "args" => [],
             "manpage" => null
@@ -78,46 +78,46 @@ final class OptionsCollectionTest extends TestCase
     }
 
     /**
-     * @testdox Test OptionsCollection::add() method with existing option
-     * @covers OptionsCollection::add
+     * @testdox Test CommandsCollection::add() method with existing command
+     * @covers CommandsCollection::add
      * @return void
      */
 
     public function testAddExisting(): void
     {
-        $this->expectException(CLI\Exception\OptionFoundException::class);
+        $this->expectException(CLI\Exception\CommandFoundException::class);
 
-        $collection = new CLI\OptionsCollection();
+        $collection = new CLI\CommandsCollection();
         $collection->add("test", [new Controller(), "method"], []);
         $collection->add("test", [new Controller(), "method"], []);
     }
 
     /**
-     * @testdox Test OptionsCollection::feed() method with incomplete definition
-     * @covers OptionsCollection::feed
+     * @testdox Test CommandsCollection::feed() method with incomplete definition
+     * @covers CommandsCollection::feed
      * @return void
      */
 
     public function testFeedIncompleteDefinition(): void
     {
-        $this->expectException(CLI\Exception\IncompleteOptionParamsException::class);
+        $this->expectException(CLI\Exception\IncompleteCommandParamsException::class);
 
-        $collection = new CLI\OptionsCollection();
+        $collection = new CLI\CommandsCollection();
         $collection->feed([
             "test" => []
         ]);
     }
 
     /**
-     * @testdox Test OptionsCollection::get() method
-     * @covers OptionsCollection::get
+     * @testdox Test CommandsCollection::get() method
+     * @covers CommandsCollection::get
      * @return void
      */
 
     public function testGet(): void
     {
-        $collection = new CLI\OptionsCollection();
-        $this->setPrivateProperty($collection, "options", [
+        $collection = new CLI\CommandsCollection();
+        $this->setPrivateProperty($collection, "commands", [
             "test" => []
         ]);
 
@@ -126,16 +126,16 @@ final class OptionsCollectionTest extends TestCase
     }
 
     /**
-     * @testdox Test OptionsCollection::get() method with non existing option
-     * @covers OptionsCollection::get
+     * @testdox Test CommandsCollection::get() method with non existing command
+     * @covers CommandsCollection::get
      * @return void
      */
 
     public function testGetNonExisting(): void
     {
-        $this->expectException(CLI\Exception\OptionNotFoundException::class);
+        $this->expectException(CLI\Exception\CommandNotFoundException::class);
 
-        $collection = new CLI\OptionsCollection();
+        $collection = new CLI\CommandsCollection();
         $collection->get("nonexisting");
     }
 }

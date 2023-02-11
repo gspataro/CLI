@@ -13,12 +13,12 @@ final class Input
     private readonly string $scriptName;
 
     /**
-     * Store option name
+     * Store command name
      *
      * @var string
      */
 
-    private readonly string $optionName;
+    private readonly string $commandName;
 
     /**
      * Store other arguments
@@ -37,7 +37,7 @@ final class Input
     public function __construct(array $argv)
     {
         $this->scriptName = $argv[0];
-        $this->optionName = $argv[1] ?? "help";
+        $this->commandName = $argv[1] ?? "help";
         $this->args = array_slice($argv, 2);
     }
 
@@ -53,14 +53,14 @@ final class Input
     }
 
     /**
-     * Get option name
+     * Get command name
      *
      * @return string
      */
 
-    public function getOptionName(): string
+    public function getCommandName(): string
     {
-        return $this->optionName;
+        return $this->commandName;
     }
 
     /**

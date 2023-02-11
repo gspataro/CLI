@@ -16,13 +16,13 @@ final class InputTest extends TestCase
     {
         $input = new CLI\Input([
             "index.php",
-            "optionName",
+            "commandName",
             "argumentOne",
             "argumentTwo"
         ]);
 
         $this->assertEquals("index.php", $input->getScriptName());
-        $this->assertEquals("optionName", $input->getOptionName());
+        $this->assertEquals("commandName", $input->getCommandName());
         $this->assertEquals(["argumentOne", "argumentTwo"], $input->getArgs());
     }
 }
