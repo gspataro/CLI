@@ -25,27 +25,31 @@ final class Handler
      * @return void
      */
 
-    public function printManpage(): void
-    {
-        $this->output->print("Usage: {$this->input->getScriptName()} *_command_* <args>");
-        $this->output->print("");
-        $this->output->print("Available commands:");
+     public function printManpage(): void
+     {
+         $this->output->print("Usage: {$this->input->getScriptName()} @b;@u;command@c; @i;option");
+         $this->output->print("");
+         $this->output->print("Available commands:");
 
-        foreach ($this->commands->getAll() as $commandName => $command) {
-            $this->output->print("*_{$commandName}_*\t\t_{$command['manpage']}_");
+         foreach ($this->commands->getAll() as $commandName => $commandDefinition) {
+             $this->output->print("@b;@u;{$commandName}\t\t{$commandDefinition['description']}@c;");
 
-            foreach ($command['args'] as $argName => $arg) {
-                $separator = is_null($arg['manpage']) ? null : " ";
-                $this->output->print("<{$argName}>\t\t{$arg['manpage']}" . (
-                    $arg['required'] ? "{$separator}(required)" : null
-                ));
-            }
+             foreach ($commandDefinition['options'] as $optionName => $optionDefinition) {
+                 $separator = is_null($optionDefinition['description']) ? null : " ";
+                 $prefix = $optionDefinition['type'] == "required" ? "-" : "--";
+                 $shortopt = $optionDefinition['short'] ? ", {$prefix}{$optionDefinition['short']}" : null;
 
-            $this->output->print("");
-        }
+                 $this->output->print("@i;{$prefix}{$optionName}{$shortopt}\t\t{$optionDefinition['description']}" . (
+                     $optionDefinition['type'] == "required" ? "{$separator}(required)" : null
+                 ));
+             }
 
-        $this->output->print("*_help_*\t\t_List available commands_");
-    }
+             $this->output->print("");
+         }
+
+         $this->output->print("@b;@u;help\t\tList available commands");
+         echo "manpage";
+     }
 
     /**
      * Start the input handling process and execute requested command callback
@@ -65,13 +69,13 @@ final class Handler
         $args = [];
         $i = 0;
 
-        foreach ($command['args'] as $argName => $params) {
-            if (!isset($this->input->getArgs()[$i]) && $params['required']) {
+        foreach ($command['options'] as $optionName => $option) {
+            if (!isset($this->input->getArgs()[$i]) && $option['type'] == "required") {
                 $this->printManpage();
                 return;
             }
 
-            $args[$argName] = $this->input->getArgs()[$i] ?? null;
+            $args[$optionName] = $this->input->getArgs()[$i] ?? null;
             $i++;
         }
 

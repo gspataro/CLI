@@ -2,6 +2,8 @@
 
 namespace GSpataro\CLI;
 
+use GSpataro\CLI\Exception\CommandNotFoundException;
+
 final class CommandsCollection
 {
     /**
@@ -27,38 +29,37 @@ final class CommandsCollection
     /**
      * Add an command to the collection
      *
-     * @param string $tag
+     * @param string $command
      * @param callable $callback
-     * @param array $args
-     * @param string|null $manpage
+     * @param array $options
+     * @param string|null $description
      * @return void
      */
 
-    public function add(string $tag, callable $callback, array $args = [], ?string $manpage = null): void
+    public function add(string $command, callable $callback, array $options = [], ?string $description = null): void
     {
-        if ($this->has($tag)) {
+        if ($this->has($command)) {
             throw new Exception\CommandFoundException(
-                "An command named '{$tag}' already exists in the collection."
+                "Command '{$command}' already exists in the collection."
             );
         }
 
-        if (!empty($args)) {
-            foreach ($args as $argName => $arg) {
-                $key = is_array($arg) ? $argName : $arg;
-
-                $args[$key]['required'] = $arg['required'] ?? false;
-                $args[$key]['manpage'] = $arg['manpage'] ?? null;
-
-                if (!is_array($arg)) {
-                    unset($args[$argName]);
-                }
+        foreach ($options as $option => &$definition) {
+            if (!is_array($definition)) {
+                throw new Exception\InvalidCommandOptionsDefinitionException(
+                    "Invalid option '{$option}' definition for command '{$command}'. An option must include an empty array or an array with validation informations."
+                );
             }
+
+            $definition['type'] = in_array($definition['type'] ?? null, ['required', 'optional', 'novalue']) ? $definition['type'] : "optional";
+            $definition['short'] = $definition['short'] ?? null;
+            $definition['description'] = $definition['description'] ?? null;
         }
 
-        $this->commands[$tag] = [
+        $this->commands[$command] = [
+            "options" => $options,
             "callback" => $callback,
-            "args" => $args,
-            "manpage" => $manpage
+            "description" => $description
         ];
     }
 
@@ -71,36 +72,33 @@ final class CommandsCollection
 
     public function feed(array $commands): void
     {
-        foreach ($commands as $tag => $params) {
-            if (!isset($params['callback'])) {
-                throw new Exception\IncompleteCommandParamsException(
-                    "Incomplete command '{$tag}' definition. An command must include at least a valid callback."
+        foreach ($commands as $command => $definition) {
+            if (!isset($definition['callback'])) {
+                throw new Exception\IncompleteCommandDefinitionException(
+                    "Incomplete command '{$command}' definition. A command must include at least a valid callback."
                 );
             }
 
-            $params['args'] = $params['args'] ?? [];
-            $params['manpage'] = $params['manpage'] ?? null;
-
-            $this->add($tag, $params['callback'], $params['args'], $params['manpage']);
+            $definition['description'] = $definition['description'] ?? null;
+            $this->add($command, $definition['callback'], $definition['options'], $definition['description']);
         }
     }
 
     /**
-     * Get an command from the collection
+     * Get a command
      *
-     * @param string $tag
      * @return array
      */
 
-    public function get(string $tag): array
+    public function get(string $command): array
     {
-        if (!$this->has($tag)) {
-            throw new Exception\CommandNotFoundException(
-                "Command named '{$tag}' not found."
+        if (!$this->has($command)) {
+            throw new CommandNotFoundException(
+                "Command '{$command}' not found in the collection."
             );
         }
 
-        return $this->commands[$tag];
+        return $this->commands[$command];
     }
 
     /**

@@ -4,6 +4,6 @@ namespace GSpataro\CLI\Exception;
 
 use Exception;
 
-class IncompleteCommandParamsException extends Exception
+class IncompleteCommandDefinitionException extends Exception
 {
 }
