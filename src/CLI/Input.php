@@ -31,14 +31,16 @@ final class Input
     /**
      * Initialize Input object
      *
-     * @param array $argv
+     * @param array|null $argv
      */
 
-    public function __construct(array $argv)
-    {
-        $this->scriptName = $argv[0];
-        $this->commandName = $argv[1] ?? "help";
-        $this->args = array_slice($argv, 2);
+    public function __construct(
+        private ?array $argv = null
+    ) {
+        $this->argv = $this->argv ?? $_SERVER['argv'];
+        $this->scriptName = $this->argv[0];
+        $this->commandName = $this->argv[1] ?? "help";
+        $this->args = array_slice($this->argv, 2);
     }
 
     /**
