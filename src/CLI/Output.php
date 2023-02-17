@@ -11,31 +11,13 @@ final class Output
      */
 
     private array $ansiRegex = [
-        [
-            // Bold: *bold*
-            "regex" => "/[\*]{1}(.*?)[\*]{1}/",
-            "code" => 1
-        ],
-        [
-            // Dim: -dim-
-            "regex" => "/[\-]{1}(.*?)[\-]{1}/",
-            "code" => 2
-        ],
-        [
-            // Underline: _underline_
-            "regex" => "/[\_]{1}(.*?)[\_]{1}/",
-            "code" => 4
-        ],
-        [
-            // Color red: !red!
-            "regex" => "/[\!]{1}(.*?)[\!]{1}/",
-            "code" => 31
-        ],
-        [
-            // Color green: #green#
-            "regex" => "/[\#]{1}(.*?)[\#]{1}/",
-            "code" => 32
-        ]
+        "c" => 0, // Clear
+        "b" => 1, // Bold
+        "d" => 2, // Dim
+        "i" => 3, // Italic
+        "u" => 4, // Underline
+        "r" => 31, // Red,
+        "g" => 32 // Green
     ];
 
     /**
@@ -57,12 +39,14 @@ final class Output
     {
         $output = str_replace("@nl", "\n", $text);
 
-        foreach ($this->ansiRegex as $format) {
-            if (!preg_match($format['regex'], $output)) {
+        foreach ($this->ansiRegex as $keyword => $code) {
+            $search = "@{$keyword};";
+
+            if (!str_contains($output, $search)) {
                 continue;
             }
 
-            $output = preg_replace($format['regex'], "\033[{$format['code']}m$1\033[{$this->normalizerCode}m", $output);
+            $output = str_replace($search, "\033[{$code}m", $output);
         }
 
         return $output;
@@ -73,17 +57,19 @@ final class Output
      *
      * @param string $text
      * @param bool $finalNewLine
+     * @param bool $autoclear
      * @param bool $raw
      * @return void
      */
 
-    public function print(string $text, bool $finalNewLine = true, bool $raw = false): void
+    public function print(string $text, bool $finalNewLine = true, bool $autoclear = true, bool $raw = false): void
     {
         if ($finalNewLine) {
             $text .= "\n";
         }
 
         if (!$raw) {
+            $text .= $autoclear ? "@c;" : null;
             $text = $this->format($text);
         }
 
