@@ -71,11 +71,14 @@ final class Handler
                 continue;
             }
 
+            // Offset values determins wheter an option is a short option or a long one
+            // Offset 1: short option
+            // Offset 2: long option
             $keyOffset = strlen($arg) == 2 ? 1 : 2;
 
-            if (!str_contains($arg, '=') && $keyOffset == 1) {
+            if (!str_contains($arg, '=')) {
                 $key = substr($arg, $keyOffset);
-                $value = isset($args[$i+1]) && !str_starts_with($args[$i+1], '-') ? $args[$i+1] : false;
+                $value = isset($args[$i+1]) && !str_starts_with($args[$i+1], '-') && $keyOffset == 1 ? $args[$i+1] : false;
             } else if (str_contains($arg, '=') && $keyOffset == 2) {
                 [$key, $value] = explode('=', $arg);
 
