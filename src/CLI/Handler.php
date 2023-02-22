@@ -52,6 +52,51 @@ final class Handler
     }
 
     /**
+     * Process arguments and return key=value structure
+     *
+     * @param array $args
+     * @return array
+     */
+
+    public function translateArguments(array $args): array
+    {
+        $output = [];
+
+        foreach ($args as $i => $arg) {
+            if (!str_starts_with($arg, '-')) {
+                continue;
+            }
+
+            if (strlen($arg) > 2 && substr($arg, 0, 2) != "--") {
+                continue;
+            }
+
+            $keyOffset = strlen($arg) == 2 ? 1 : 2;
+
+            if (!str_contains($arg, '=') && $keyOffset == 1) {
+                $key = substr($arg, $keyOffset);
+                $value = isset($args[$i+1]) && !str_starts_with($args[$i+1], '-') ? $args[$i+1] : false;
+            } else if (str_contains($arg, '=') && $keyOffset == 2) {
+                [$key, $value] = explode('=', $arg);
+
+                $key = substr($key, $keyOffset);
+            } else {
+                continue;
+            }
+
+            if (isset($output[$key])) {
+                $values = is_array($output[$key]) ? $output[$key] : [$output[$key]];
+                $values[] = $value;
+                $output[$key] = $values;
+            } else {
+                $output[$key] = $value;
+            }
+        }
+
+        return $output;
+    }
+
+    /**
      * Start the input handling process and execute requested command callback
      *
      * @return void
