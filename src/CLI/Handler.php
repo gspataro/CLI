@@ -114,23 +114,24 @@ final class Handler
 
         $commandName = $this->input->getCommandName();
         $command = $this->commands->get($commandName);
-        $args = [];
+
+        $inputArgs = $this->translateArguments($this->input->getArgs());
+        $outputArgs = [];
         $i = 0;
 
         foreach ($command['options'] as $optionName => $option) {
-            if (!isset($this->input->getArgs()[$i]) && $option['type'] == "required") {
+            if (!isset($inputArgs[$optionName]) && !isset($inputArgs[$option['short']]) && $option['type'] == "required") {
                 $this->printManpage();
                 return;
             }
 
-            $args[$optionName] = $this->input->getArgs()[$i] ?? null;
+            $outputArgs[$optionName] = $inputArgs[$optionName] ?? $inputArgs[$option['short']] ?? null;
             $i++;
         }
 
         call_user_func_array($command['callback'], [
             "input" => $this->input,
             "output" => $this->output,
-            "args" => $args
-        ]);
+        ] + $outputArgs);
     }
 }
