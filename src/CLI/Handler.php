@@ -25,31 +25,31 @@ final class Handler
      * @return void
      */
 
-     public function printManpage(): void
-     {
-         $this->output->print("Usage: {$this->input->getScriptName()} @b;@u;command@c; @i;option");
-         $this->output->print("");
-         $this->output->print("Available commands:");
+    public function printManpage(): void
+    {
+        $this->output->print("Usage: {$this->input->getScriptName()} @b;@u;command@c; @i;option");
+        $this->output->print("");
+        $this->output->print("Available commands:");
 
-         foreach ($this->commands->getAll() as $commandName => $commandDefinition) {
-             $this->output->print("@b;@u;{$commandName}\t\t{$commandDefinition['description']}@c;");
+        foreach ($this->commands->getAll() as $commandName => $commandDefinition) {
+            $this->output->print("@b;@u;{$commandName}\t\t{$commandDefinition['description']}@c;");
 
-             foreach ($commandDefinition['options'] as $optionName => $optionDefinition) {
-                 $separator = is_null($optionDefinition['description']) ? null : " ";
-                 $prefix = $optionDefinition['type'] == "required" ? "-" : "--";
-                 $shortopt = $optionDefinition['short'] ? ", {$prefix}{$optionDefinition['short']}" : null;
+            foreach ($commandDefinition['options'] as $optionName => $optionDefinition) {
+                $separator = is_null($optionDefinition['description']) ? null : " ";
+                $prefix = $optionDefinition['type'] == "required" ? "-" : "--";
+                $shortopt = $optionDefinition['short'] ? ", {$prefix}{$optionDefinition['short']}" : null;
 
-                 $this->output->print("@i;{$prefix}{$optionName}{$shortopt}\t\t{$optionDefinition['description']}" . (
-                     $optionDefinition['type'] == "required" ? "{$separator}(required)" : null
-                 ));
-             }
+                $this->output->print("@i;{$prefix}{$optionName}{$shortopt}\t\t{$optionDefinition['description']}" . (
+                    $optionDefinition['type'] == "required" ? "{$separator}(required)" : null
+                ));
+            }
 
-             $this->output->print("");
-         }
+            $this->output->print("");
+        }
 
-         $this->output->print("@b;@u;help\t\tList available commands");
-         echo "manpage";
-     }
+        $this->output->print("@b;@u;help\t\tList available commands");
+        echo "manpage";
+    }
 
     /**
      * Start the input handling process and execute requested command callback
