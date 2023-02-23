@@ -75,4 +75,31 @@ final class Output
 
         printf($text);
     }
+
+    /**
+     * Print a table to the console
+     *
+     * @param array $table
+     * @param int $columns
+     * @param bool $heading
+     * @param int $pad
+     * @return void
+     */
+
+    public function printTable(array $table, int $columns, bool $heading = true, int $pad = 5): void
+    {
+        $mask = "";
+
+        for ($i = 0; $i < $columns; $i++) {
+            $colSize = max(array_map("strlen", array_column($table, $i)));
+            $colWidth = $colSize + $pad;
+            $mask .= "%-{$colWidth}.{$colWidth}s";
+        }
+
+        $mask .= "\n";
+
+        foreach ($table as $row) {
+            call_user_func_array("printf", array_merge((array) $mask, $row));
+        }
+    }
 }
