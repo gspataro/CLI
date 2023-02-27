@@ -97,9 +97,10 @@ final class Output
         }
 
         $mask .= "\n";
+        $headingMask = "\033[1m\033[4m{$mask}\033[0m";
 
-        foreach ($table as $row) {
-            call_user_func_array("printf", array_merge((array) $mask, $row));
+        foreach ($table as $i => $row) {
+            call_user_func_array("printf", array_merge((array) ($i == 0 && $heading ? $headingMask : $mask), $row));
         }
     }
 }
