@@ -31,24 +31,43 @@ final class Handler
         $this->output->print("");
         $this->output->print("Available commands:");
 
+        $table = [];
+
         foreach ($this->commands->getAll() as $commandName => $commandDefinition) {
-            $this->output->print("@b;@u;{$commandName}\t\t{$commandDefinition['description']}@c;");
+
+            $table[] = [
+                "heading" => [$commandName, $commandDefinition['description']]
+            ];
 
             foreach ($commandDefinition['options'] as $optionName => $optionDefinition) {
                 $separator = is_null($optionDefinition['description']) ? null : " ";
                 $prefix = $optionDefinition['type'] == "required" ? "-" : "--";
-                $shortopt = $optionDefinition['short'] ? ", {$prefix}{$optionDefinition['short']}" : null;
+                $shortopt = $optionDefinition['short'] ? "{$prefix}{$optionDefinition['short']}, " : null;
 
-                $this->output->print("@i;{$prefix}{$optionName}{$shortopt}\t\t{$optionDefinition['description']}" . (
-                    $optionDefinition['type'] == "required" ? "{$separator}(required)" : null
-                ));
+                $table[] = [
+                    "row" => [
+                        $shortopt . $prefix . $optionName,
+                        $optionDefinition['description'] . ($optionDefinition['type'] == "required" ? "{$separator}(required)" : null)
+                    ]
+                ];
             }
 
-            $this->output->print("");
+            $table[] = [];
         }
 
-        $this->output->print("@b;@u;help\t\tList available commands");
-        echo "manpage";
+        $table[] = [
+            "heading" => [
+                "help",
+                "List available commands"
+            ]
+        ];
+
+        $this->output->printTable($table, 2, 5, [
+            "row" => [
+                "prefix" => "\033[3m",
+                "suffix" => "\033[0m"
+            ]
+        ]);
     }
 
     /**
