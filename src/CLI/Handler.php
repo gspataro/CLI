@@ -34,7 +34,6 @@ final class Handler
         $table = [];
 
         foreach ($this->commands->getAll() as $commandName => $commandDefinition) {
-
             $table[] = [
                 "heading" => [$commandName, $commandDefinition['description']]
             ];
