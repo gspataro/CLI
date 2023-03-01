@@ -5,31 +5,24 @@ namespace GSpataro\CLI;
 final class Output
 {
     /**
-     * Store ANSI codes
+     * Store format placeholders
      *
      * @var array
      */
 
-    private array $ansiCodes = [
-        "@c;" => "\033[0m", // Clear
-        "@b;" => "\033[1m", // Bold
-        "@d;" => "\033[2m", // Dim
-        "@i;" => "\033[3m", // Italic
-        "@u;" => "\033[4m", // Underline
-        "@r;" => "\033[31m", // Red,
-        "@g;" => "\033[32m" // Green
+    private array $formatPlaceholders = [
+        "{nl}" => "\n",
+        "{clear}" => "\033[0m",
+        "{bold}" => "\033[1m",
+        "{dim}" => "\033[2m",
+        "{italic}" => "\033[3m",
+        "{underline}" => "\033[4m",
+        "{red}" => "\033[31m",
+        "{green}" => "\033[32m"
     ];
 
     /**
-     * Store text normalizer code
-     *
-     * @var int
-     */
-
-    private int $normalizerCode = 0;
-
-    /**
-     * Prepare the text replacing regular expressions with ANSI codes
+     * Prepare the text replacing placeholders with formats
      *
      * @param string $text
      * @return string
@@ -37,7 +30,7 @@ final class Output
 
     private function format(string $text): string
     {
-        return strtr($text, array_merge(["@nl" => "\n"], $this->ansiCodes));
+        return strtr($text, $this->formatPlaceholders);
     }
 
     /**
@@ -50,7 +43,7 @@ final class Output
     private function striptags(string $text): string
     {
         return str_replace(
-            array_merge(["@nl"], array_keys($this->ansiCodes)),
+            array_merge(["@nl"], array_keys($this->formatPlaceholders)),
             "",
             $text
         );
@@ -73,7 +66,7 @@ final class Output
         }
 
         if (!$raw) {
-            $text .= $autoclear ? "@c;" : null;
+            $text .= $autoclear ? "\033[0m" : null;
             $text = $this->format($text);
         }
 
