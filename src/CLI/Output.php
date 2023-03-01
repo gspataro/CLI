@@ -2,8 +2,6 @@
 
 namespace GSpataro\CLI;
 
-use function PHPSTORM_META\map;
-
 final class Output
 {
     /**
