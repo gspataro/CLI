@@ -27,8 +27,7 @@ final class Handler
 
     public function printManpage(): void
     {
-        $this->output->print("Usage: {$this->input->getScriptName()} @b;@u;command@c; @i;option");
-        $this->output->print("");
+        $this->output->print("Usage: {$this->input->getScriptName()} {bold}{underline}command{clear} {italic}option{nl}");
         $this->output->print("Available commands:");
 
         $table = [];
