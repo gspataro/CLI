@@ -10,16 +10,19 @@ final class Output
      * @var array
      */
 
-    private array $formatPlaceholders = [
-        "{nl}" => "\n",
-        "{clear}" => "\033[0m",
-        "{bold}" => "\033[1m",
-        "{dim}" => "\033[2m",
-        "{italic}" => "\033[3m",
-        "{underline}" => "\033[4m",
-        "{red}" => "\033[31m",
-        "{green}" => "\033[32m"
-    ];
+    private array $formatPlaceholders = [];
+
+    /**
+     * Initialize Output object
+     */
+
+    public function __construct()
+    {
+        // Convert OutputFormatEnum to array
+        foreach (OutputFormatEnum::toArray() as $key => $value) {
+            $this->formatPlaceholders['{' . $key . '}'] = $value;
+        }
+    }
 
     /**
      * Prepare the text replacing placeholders with formats
@@ -43,7 +46,7 @@ final class Output
     private function striptags(string $text): string
     {
         return str_replace(
-            array_merge(["@nl"], array_keys($this->formatPlaceholders)),
+            array_keys($this->formatPlaceholders),
             "",
             $text
         );
@@ -62,11 +65,11 @@ final class Output
     public function print(string $text, bool $finalNewLine = true, bool $autoclear = true, bool $raw = false): void
     {
         if ($finalNewLine) {
-            $text .= "\n";
+            $text .= OutputFormatEnum::nl->value;
         }
 
         if (!$raw) {
-            $text .= $autoclear ? "\033[0m" : null;
+            $text .= $autoclear ? OutputFormatEnum::clear->value : null;
             $text = $this->format($text);
         }
 
@@ -86,8 +89,8 @@ final class Output
     public function printTable(array $structure, int $columnsNumber, int $pad = 5, array $styles = []): void
     {
         $styles['heading'] = $styles['heading'] ?? [
-            "prefix" => "\033[1m\033[4m",
-            "suffix" => "\033[0m"
+            "prefix" => OutputFormatEnum::bold->value . OutputFormatEnum::underline->value,
+            "suffix" => OutputFormatEnum::clear->value
         ];
 
         $styles['row'] = $styles['row'] ?? [
@@ -123,7 +126,7 @@ final class Output
             $mask .= "%-{$colWidth}.{$colWidth}s";
         }
 
-        $mask .= "\n";
+        $mask .= OutputFormatEnum::nl->value;
 
         foreach ($structure as $i => $row) {
             $type = array_keys($row)[0] ?? null;
