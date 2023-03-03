@@ -1,6 +1,7 @@
 <?php
 
 use GSpataro\CLI\Output;
+use GSpataro\CLI\OutputFormatEnum;
 
 /**
  * Test the table functionality of the output class
@@ -35,16 +36,16 @@ $output->printTable(
     columnsNumber: 2,
     styles: [
         "heading" => [
-            "prefix" => "\033[31m\033[3m",
-            "suffix" => "\033[0m"
+            "prefix" => OutputFormatEnum::red->value . OutputFormatEnum::italic->value,
+            "suffix" => OutputFormatEnum::clear->value
         ],
         "row" => [
-            "prefix" => "\033[2m",
-            "suffix" => "\033[0m"
+            "prefix" => OutputFormatEnum::dim->value,
+            "suffix" => OutputFormatEnum::clear->value
         ],
         "custom" => [
-            "prefix" => "\033[32m",
-            "suffix" => "\033[0m"
+            "prefix" => OutputFormatEnum::green->value,
+            "suffix" => OutputFormatEnum::clear->value
         ]
     ]
 );
