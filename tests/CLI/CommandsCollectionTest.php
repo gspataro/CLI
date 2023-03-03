@@ -72,8 +72,8 @@ final class CommandsCollectionTest extends TestCase
         $commands = $this->readPrivateProperty($collection, "commands");
         $this->assertEquals($commands['test'], [
             "callback" => [new Controller(), "method"],
-            "args" => [],
-            "manpage" => null
+            "options" => [],
+            "description" => null
         ]);
     }
 
@@ -100,7 +100,7 @@ final class CommandsCollectionTest extends TestCase
 
     public function testFeedIncompleteDefinition(): void
     {
-        $this->expectException(CLI\Exception\IncompleteCommandParamsException::class);
+        $this->expectException(CLI\Exception\IncompleteCommandDefinitionException::class);
 
         $collection = new CLI\CommandsCollection();
         $collection->feed([
