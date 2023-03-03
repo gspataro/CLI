@@ -3,17 +3,29 @@
 use GSpataro\CLI\Output;
 use GSpataro\CLI\OutputFormatEnum;
 
-/**
- * Test the table functionality of the output class
- */
-
 require_once __DIR__ . '/bootstrap.php';
 
 $output = new Output();
 
+/**
+ * Test styles
+ */
+
+foreach (OutputFormatEnum::toArray() as $key => $value) {
+    if ($key == "nl") {
+        continue;
+    }
+
+    $output->print("{{$key}}{$key}");
+}
+
+/**
+ * Test the table functionality of the output class
+ */
+
 // Test default table
 
-$output->print("Default table:");
+$output->print("{nl}Default table:");
 $output->printTable([
     ["heading" => ["Name", "Surname", "City"]],
     ["row" => ["Wolfgang Amadeus", "Mozart", "Vienna"]],
