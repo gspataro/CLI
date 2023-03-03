@@ -34,7 +34,7 @@ final class OutputTest extends TestCase
         $green = "\033[32m";
 
         return [
-            "raw" => "normal *bold* -dim- _underline_ !red! #green#",
+            "raw" => "normal {bold}bold{clear} {dim}dim{clear} {underline}underline{clear} {red}red{clear} {green}green{clear}",
             "formatted" =>
                 "normal {$bold}bold{$normal} {$dim}dim{$normal} " .
                 "{$underline}underline{$normal} {$red}red{$normal} {$green}green{$normal}"
@@ -52,7 +52,7 @@ final class OutputTest extends TestCase
         $text = "This is a test!";
         $output = $this->getResponse();
 
-        $this->expectOutputString("{$text}\n");
+        $this->expectOutputString("{$text}\n\033[0m");
         $output->print($text);
     }
 
@@ -67,10 +67,28 @@ final class OutputTest extends TestCase
         $text = "This is a test!";
         $output = $this->getResponse();
 
-        $this->expectOutputString($text);
+        $this->expectOutputString("{$text}\033[0m");
         $output->print(
             text: $text,
             finalNewLine: false
+        );
+    }
+
+    /**
+     * @testdox Test Output::print() without autoclear
+     * @covers Output::print
+     * @return void
+     */
+
+    public function testPrintNoAutoclear(): void
+    {
+        $text = "This is a test!";
+        $output = $this->getResponse();
+
+        $this->expectOutputString("{$text}\n");
+        $output->print(
+            text: $text,
+            autoclear: false
         );
     }
 
@@ -85,7 +103,7 @@ final class OutputTest extends TestCase
         $text = $this->getMockupText();
         $output = $this->getResponse();
 
-        $this->expectOutputString("{$text['formatted']}\n");
+        $this->expectOutputString("{$text['formatted']}\n\033[0m");
         $output->print($text['raw']);
     }
 
