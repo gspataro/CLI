@@ -1,7 +1,7 @@
 <?php
 
 use GSpataro\CLI\Output;
-use GSpataro\CLI\OutputFormatEnum;
+use GSpataro\CLI\EscapeCodesEnum;
 
 require_once __DIR__ . '/bootstrap.php';
 
@@ -11,12 +11,12 @@ $output = new Output();
  * Test styles
  */
 
-foreach (OutputFormatEnum::toArray() as $key => $value) {
+foreach (EscapeCodesEnum::toArray() as $key => $value) {
     if ($key == "nl") {
         continue;
     }
 
-    $output->print("{{$key}}{$key}");
+    $output->print("{{$key}}{$key}\033[0m");
 }
 
 /**
@@ -48,16 +48,16 @@ $output->printTable(
     columnsNumber: 2,
     styles: [
         "heading" => [
-            "prefix" => OutputFormatEnum::red->value . OutputFormatEnum::italic->value,
-            "suffix" => OutputFormatEnum::clear->value
+            "prefix" => EscapeCodesEnum::fg_red->value . EscapeCodesEnum::italic->value,
+            "suffix" => EscapeCodesEnum::clear->value
         ],
         "row" => [
-            "prefix" => OutputFormatEnum::dim->value,
-            "suffix" => OutputFormatEnum::clear->value
+            "prefix" => EscapeCodesEnum::dim->value,
+            "suffix" => EscapeCodesEnum::clear->value
         ],
         "custom" => [
-            "prefix" => OutputFormatEnum::green->value,
-            "suffix" => OutputFormatEnum::clear->value
+            "prefix" => EscapeCodesEnum::fg_green->value,
+            "suffix" => EscapeCodesEnum::clear->value
         ]
     ]
 );
