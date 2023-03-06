@@ -53,6 +53,19 @@ $commands->feed([
             ]
         ],
         "description" => "Execute build"
+    ],
+    "register" => [
+        "callback" => function (Input $input, Output $output) {
+            $output->print("Welcome to the registration prompt!{nl}");
+
+            $username = $output->prompt("Username:");
+            $password = $output->prompt("{fg_red}Password:", true);
+            $hobbies = $output->prompt("Hobbies:", false, true, ", ");
+
+            $output->print("{fg_green}Welcome {$username}, your hobbies are: (" . implode(", ", $hobbies) . ")!");
+        },
+        "options" => [],
+        "description" => "Register"
     ]
 ]);
 
