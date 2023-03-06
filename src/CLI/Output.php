@@ -18,8 +18,8 @@ final class Output
 
     public function __construct()
     {
-        // Convert OutputFormatEnum to array
-        foreach (OutputFormatEnum::toArray() as $key => $value) {
+        // Convert EscapeCodesEnum to array
+        foreach (EscapeCodesEnum::toArray() as $key => $value) {
             $this->formatPlaceholders['{' . $key . '}'] = $value;
         }
     }
@@ -65,12 +65,12 @@ final class Output
     public function print(string $text, bool $finalNewLine = true, bool $autoclear = true, bool $raw = false): void
     {
         if ($finalNewLine) {
-            $text .= OutputFormatEnum::nl->value;
+            $text .= EscapeCodesEnum::nl->value;
         }
 
         if (!$raw) {
-            $text .= $autoclear ? OutputFormatEnum::clear->value : null;
             $text = $this->format($text);
+            $text .= $autoclear ? EscapeCodesEnum::clear->value : null;
         }
 
         printf($text);
@@ -89,8 +89,8 @@ final class Output
     public function printTable(array $structure, int $columnsNumber, int $pad = 5, array $styles = []): void
     {
         $styles['heading'] = $styles['heading'] ?? [
-            "prefix" => OutputFormatEnum::bold->value . OutputFormatEnum::underline->value,
-            "suffix" => OutputFormatEnum::clear->value
+            "prefix" => EscapeCodesEnum::bold->value . EscapeCodesEnum::underline->value,
+            "suffix" => EscapeCodesEnum::clear->value
         ];
 
         $styles['row'] = $styles['row'] ?? [
@@ -126,7 +126,7 @@ final class Output
             $mask .= "%-{$colWidth}.{$colWidth}s";
         }
 
-        $mask .= OutputFormatEnum::nl->value;
+        $mask .= EscapeCodesEnum::nl->value;
 
         foreach ($structure as $i => $row) {
             $type = array_keys($row)[0] ?? null;
