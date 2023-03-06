@@ -13,43 +13,47 @@ $output = new Output();
 
 $commands->feed([
     "set" => [
-        "callback" => function (Input $input, Output $output, array $args) {
-            $output->print("key: {$args['key']}");
-            $output->print("value: {$args['value']}");
-            $output->print("#Configuration updated successfully!#");
+        "callback" => function (Input $input, Output $output, string $key, string $value, ?string $type, ?bool $overwrite) {
+            $output->print("key: {$key}");
+            $output->print("value: {$value}");
+            $output->print("type: {$type}");
+            $output->print("overwrite: " . (is_null($overwrite) ? "false" : "true"));
+            $output->print("{bg_green}Configuration updated successfully!");
         },
-        "args" => [
+        "options" => [
             "key" => [
-                "required" => true,
-                "manpage" => "The key of the configuration to update"
+                "type" => "required",
+                "short" => "k",
+                "description" => "The key of the configuration to update"
             ],
             "value" => [
-                "required" => true,
-                "manpage" => "The new value"
+                "type" => "required",
+                "short" => "v",
+                "description" => "The new value"
+            ],
+            "type" => [],
+            "overwrite" => [
+                "type" => "novalue"
             ]
         ],
-        "manpage" => "Update a configuration value"
+        "description" => "Update a configuration value"
     ],
-    "build" => [
-        "callback" => function (Input $input, Output $output, array $args) {
-            $output->print("Under construction...");
-        },
-        "args" => [
-            "mode" => [
-                "required" => false,
-                "manpage" => "Pass mode argument to builder, e.g. reset"
+    "login" => [
+        "callback" => fn(Input $input, Output $output, string $username, string $password) => $output->print("{fg_green}Logged in as {$username}:{$password}!"),
+        "options" => [
+            "username" => [
+                "type" => "required",
+                "short" => "u",
+                "description" => "The username"
+            ],
+            "password" => [
+                "type" => "required",
+                "short" => "p",
+                "description" => "The password"
             ]
         ],
-        "manpage" => "Execute build"
-    ],
-    "test" => [
-        "callback" => fn(Input $input, Output $output, $args) => $output->print("Logged in as {$args['username']}:{$args['password']}!"),
-        "args" => [
-            "username",
-            "password"
-        ],
-        "manpage" => "Execute build"
-    ],
+        "description" => "Execute build"
+    ]
 ]);
 
 $handler = new Handler($commands, $input, $output);
