@@ -1,8 +1,8 @@
 {
     "name": "gspataro/cli",
-    "description": "A PHP based CLI component",
+    "description": "Create terminal applications with ease",
     "keywords": ["cli"],
-    "version": "0.1.1",
+    "version": "1.0.0",
     "authors": [
         {
             "name": "Giuseppe Spataro",
