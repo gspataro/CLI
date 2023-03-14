@@ -34,7 +34,7 @@ final class OutputTest extends TestCase
         $green = "\033[32m";
 
         return [
-            "raw" => "normal {bold}bold{clear} {dim}dim{clear} {underline}underline{clear} {red}red{clear} {green}green{clear}",
+            "raw" => "normal {bold}bold{clear} {dim}dim{clear} {underline}underline{clear} {fg_red}red{clear} {fg_green}green{clear}",
             "formatted" =>
                 "normal {$bold}bold{$normal} {$dim}dim{$normal} " .
                 "{$underline}underline{$normal} {$red}red{$normal} {$green}green{$normal}"
