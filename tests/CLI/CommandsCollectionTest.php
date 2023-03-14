@@ -4,6 +4,7 @@ namespace GSpataro\Test;
 
 use GSpataro\CLI;
 use GSpataro\Test\Utilities\Controller;
+use GSpataro\Test\Utilities\InvalidController;
 use PHPUnit\Framework\TestCase;
 
 final class CommandsCollectionTest extends TestCase
@@ -75,6 +76,34 @@ final class CommandsCollectionTest extends TestCase
             "options" => [],
             "description" => null
         ]);
+    }
+
+    /**
+     * @testdox Test CommandsCollection::add() method with invalid class callback (invalid class)
+     * @covers CommandsCollection::add
+     * @return void
+     */
+
+    public function testAddInvalidClassCallbackInvalidClass(): void
+    {
+        $this->expectException(CLI\Exception\InvalidCommandCallbackException::class);
+
+        $collection = new CLI\CommandsCollection();
+        $collection->add("test", [new InvalidController(), "method"], []);
+    }
+
+    /**
+     * @testdox Test CommandsCollection::add() method with invalid class callback (invalid method)
+     * @covers CommandsCollection::add
+     * @return void
+     */
+
+    public function testAddInvalidClassCallbackNonExistingMethod(): void
+    {
+        $this->expectException(CLI\Exception\InvalidCommandCallbackException::class);
+
+        $collection = new CLI\CommandsCollection();
+        $collection->add("test", [new Controller(), "invalidMethod"], []);
     }
 
     /**

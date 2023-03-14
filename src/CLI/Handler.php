@@ -146,9 +146,16 @@ final class Handler
             $i++;
         }
 
-        call_user_func_array($command['callback'], [
-            "input" => $this->input,
-            "output" => $this->output,
-        ] + $outputArgs);
+        if (is_array($command['callback'])) {
+            $object = $command['callback'][0];
+            $object->setIO($this->input, $this->output);
+
+            call_user_func_array($command['callback'], $outputArgs);
+        } else {
+            call_user_func_array($command['callback'], [
+                "input" => $this->input,
+                "output" => $this->output,
+            ] + $outputArgs);
+        }
     }
 }

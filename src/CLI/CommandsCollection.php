@@ -30,18 +30,32 @@ final class CommandsCollection
      * Add an command to the collection
      *
      * @param string $command
-     * @param callable $callback
+     * @param array|callable $callback
      * @param array $options
      * @param string|null $description
      * @return void
      */
 
-    public function add(string $command, callable $callback, array $options = [], ?string $description = null): void
+    public function add(string $command, array|callable $callback, array $options = [], ?string $description = null): void
     {
         if ($this->has($command)) {
             throw new Exception\CommandFoundException(
                 "Command '{$command}' already exists in the collection."
             );
+        }
+
+        if (is_array($callback)) {
+            if (!isset($callback[0]) || !$callback[0] instanceof Command) {
+                throw new Exception\InvalidCommandCallbackException(
+                    "Invalid callback for command '{$command}'. The first element of the array must be a class."
+                );
+            }
+
+            if (!isset($callback[1]) || !method_exists($callback[0], $callback[1])) {
+                throw new Exception\InvalidCommandCallbackException(
+                    "Invalid callback for command '{$command}'. The second element of the array must be a method of '" . $callback[0]::class . "'."
+                );
+            }
         }
 
         foreach ($options as $option => &$definition) {
