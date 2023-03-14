@@ -61,3 +61,36 @@ $output->printTable(
         ]
     ]
 );
+
+/**
+ * Test the stopwatch functionality
+ */
+
+$output->print("{nl}Stopwatch:");
+
+$output->startStopwatch('test');
+sleep(3);
+$output->print("Elapsed: {$output->stopStopwatch('test')}");
+
+// Test stopwatch step
+
+$output->print("{nl}Stopwatch step:");
+
+$output->startStopwatch('step');
+sleep(3);
+$output->print("First step: {$output->stepStopwatch('step')}");
+sleep(3);
+$output->print("Elapsed: {$output->stopStopwatch('step')}");
+
+// Test multiple stopwatches
+
+$output->print("{nl}Multiple stopwatches:");
+
+$output->startStopwatch('first');
+$output->startStopwatch('second');
+
+sleep(3);
+$output->print("First stopwatch elapsed time: {$output->stopStopwatch('first')}");
+
+sleep(5);
+$output->print("Second stopwatch elapsed time: {$output->stopStopwatch('second')}");

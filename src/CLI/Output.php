@@ -13,6 +13,14 @@ final class Output
     private array $formatPlaceholders = [];
 
     /**
+     * Store stopwatches
+     *
+     * @var array
+     */
+
+    private array $stopwatches = [];
+
+    /**
      * Initialize Output object
      */
 
@@ -155,5 +163,55 @@ final class Output
         printf(EscapeCodesEnum::clear->value);
 
         return $multiple ? explode($separator, $value) : $value;
+    }
+
+    /**
+     * Start a new stopwatch
+     * If a stopwatch with this name already exists it will reset it
+     *
+     * @param string $name
+     * @return void
+     */
+
+    public function startStopwatch(string $name): void
+    {
+        $this->stopwatches[$name] = microtime(true);
+    }
+
+    /**
+     * Get a stopwatch step
+     * If the stopwatch doesn't exists it will return 0
+     *
+     * @param string $name
+     * @return float
+     */
+
+    public function stepStopwatch(string $name): float
+    {
+        if (!isset($this->stopwatches[$name])) {
+            return 0;
+        }
+
+        return microtime(true) - $this->stopwatches[$name];
+    }
+
+    /**
+     * Stop a stopwatch and return elapsed time in seconds
+     * If the stopwatch doesn't exists it will return 0
+     *
+     * @param string $name
+     * @return float
+     */
+
+    public function stopStopwatch(string $name): float
+    {
+        if (!isset($this->stopwatches[$name])) {
+            return 0;
+        }
+
+        $lastReading = $this->stopwatches[$name];
+        unset($this->stopwatches[$name]);
+
+        return microtime(true) - $lastReading;
     }
 }
