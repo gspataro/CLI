@@ -4,6 +4,7 @@ use GSpataro\CLI\Handler;
 use GSpataro\CLI\CommandsCollection;
 use GSpataro\CLI\Input;
 use GSpataro\CLI\Output;
+use GSpataro\Test\Utilities\TestCommand;
 
 require_once __DIR__ . "/bootstrap.php";
 
@@ -66,6 +67,17 @@ $commands->feed([
         },
         "options" => [],
         "description" => "Register"
+    ],
+    "setfoo" => [
+        "callback" => [new TestCommand(), 'main'],
+        'options' => [
+            'foo' => [
+                'type' => 'required',
+                'short' => 'f',
+                'description' => 'The value of foo'
+            ]
+        ],
+        'description' => 'Set the content of foo'
     ]
 ]);
 

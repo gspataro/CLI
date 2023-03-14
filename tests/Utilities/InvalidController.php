@@ -2,9 +2,7 @@
 
 namespace GSpataro\Test\Utilities;
 
-use GSpataro\CLI\Command;
-
-final class Controller extends Command
+final class InvalidController
 {
     public function method(): void
     {
