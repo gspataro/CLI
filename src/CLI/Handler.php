@@ -27,7 +27,9 @@ final class Handler
 
     public function printManpage(): void
     {
-        $this->output->print("Usage: {$this->input->getScriptName()} {bold}{underline}command{clear} {italic}option{nl}");
+        $this->output->print(
+            "Usage: {$this->input->getScriptName()} {bold}{underline}command{clear} {italic}option{nl}"
+        );
         $this->output->print("Available commands:");
 
         $table = [];
@@ -45,7 +47,8 @@ final class Handler
                 $table[] = [
                     "row" => [
                         $shortopt . $prefix . $optionName,
-                        $optionDefinition['description'] . ($optionDefinition['type'] == "required" ? "{$separator}(required)" : null)
+                        $optionDefinition['description'] .
+                        ($optionDefinition['type'] == "required" ? "{$separator}(required)" : null)
                     ]
                 ];
             }
@@ -95,8 +98,10 @@ final class Handler
 
             if (!str_contains($arg, '=')) {
                 $key = substr($arg, $keyOffset);
-                $value = isset($args[$i+1]) && !str_starts_with($args[$i+1], '-') && $keyOffset == 1 ? $args[$i+1] : false;
-            } else if (str_contains($arg, '=') && $keyOffset == 2) {
+                $value = isset($args[$i + 1]) && !str_starts_with($args[$i + 1], '-') && $keyOffset == 1
+                    ? $args[$i + 1]
+                    : false;
+            } elseif (str_contains($arg, '=') && $keyOffset == 2) {
                 [$key, $value] = explode('=', $arg);
 
                 $key = substr($key, $keyOffset);
@@ -137,7 +142,11 @@ final class Handler
         $i = 0;
 
         foreach ($command['options'] as $optionName => $option) {
-            if (!isset($inputArgs[$optionName]) && !isset($inputArgs[$option['short']]) && $option['type'] == "required") {
+            if (
+                !isset($inputArgs[$optionName]) &&
+                !isset($inputArgs[$option['short']]) &&
+                $option['type'] == "required"
+            ) {
                 $this->printManpage();
                 return;
             }
