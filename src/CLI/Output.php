@@ -157,8 +157,12 @@ final class Output
      * @return mixed
      */
 
-    public function prompt(string $message, bool $obfuscate = false, bool $multiple = false, string $separator = " "): mixed
-    {
+    public function prompt(
+        string $message,
+        bool $obfuscate = false,
+        bool $multiple = false,
+        string $separator = " "
+    ): mixed {
         $value = readline($this->format($message) . " " . ($obfuscate ? EscapeCodesEnum::conceal->value : null));
         printf(EscapeCodesEnum::clear->value);
 
