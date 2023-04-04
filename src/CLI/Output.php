@@ -45,22 +45,6 @@ final class Output
     }
 
     /**
-     * Get text without format tags
-     *
-     * @param string $text
-     * @return string
-     */
-
-    private function striptags(string $text): string
-    {
-        return str_replace(
-            array_keys($this->formatPlaceholders),
-            "",
-            $text
-        );
-    }
-
-    /**
      * Print text to the console
      *
      * @param string $text
