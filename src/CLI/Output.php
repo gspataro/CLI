@@ -2,7 +2,9 @@
 
 namespace GSpataro\CLI;
 
-final class Output
+use GSpataro\CLI\Interface\OutputInterface;
+
+final class Output implements OutputInterface
 {
     /**
      * Store format placeholders
@@ -39,7 +41,7 @@ final class Output
      * @return string
      */
 
-    private function format(string $text): string
+    public function format(string $text): string
     {
         return strtr($text, $this->formatPlaceholders);
     }

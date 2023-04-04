@@ -2,7 +2,9 @@
 
 namespace GSpataro\CLI;
 
-final class Input
+use GSpataro\CLI\Interface\InputInterface;
+
+final class Input implements InputInterface
 {
     /**
      * Store script name
