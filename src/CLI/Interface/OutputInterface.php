@@ -14,6 +14,15 @@ interface OutputInterface
     public function format(string $text): string;
 
     /**
+     * Remove the format from a text
+     *
+     * @param string $text
+     * @return string
+     */
+
+    public function removeFormat(string $text): string;
+
+    /**
      * Print text to the console
      *
      * @param string $text

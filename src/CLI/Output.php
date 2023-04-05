@@ -47,6 +47,22 @@ final class Output implements OutputInterface
     }
 
     /**
+     * Remove the format from a text
+     *
+     * @param string $text
+     * @return string
+     */
+
+    public function removeFormat(string $text): string
+    {
+        return str_replace(
+            array_keys($this->formatPlaceholders),
+            "",
+            $text
+        );
+    }
+
+    /**
      * Print text to the console
      *
      * @param string $text
