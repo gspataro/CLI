@@ -154,28 +154,4 @@ final class Output implements OutputInterface
             call_user_func_array("printf", array_merge((array) ($style['prefix'] . $mask . $style['suffix']), $cols));
         }
     }
-
-    /**
-     * Prompt the user to enter a value
-     * If obfuscate is set to true the user input will be obfuscated
-     * If multiple is set to true the promp will accept multiple values separated by the separator
-     *
-     * @param string $message
-     * @param bool $obfuscate
-     * @param bool $multiple
-     * @param string $separator
-     * @return mixed
-     */
-
-    public function prompt(
-        string $message,
-        bool $obfuscate = false,
-        bool $multiple = false,
-        string $separator = " "
-    ): mixed {
-        $value = readline($this->format($message) . " " . ($obfuscate ? Enum\StylesEnum::conceal->value : null));
-        printf(Enum\StylesEnum::clear->value);
-
-        return $multiple ? explode($separator, $value) : $value;
-    }
 }
