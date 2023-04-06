@@ -1,23 +1,13 @@
 <?php
 
-namespace GSpataro\CLI;
+namespace GSpataro\CLI\Enum;
 
-enum EscapeCodesEnum: string
+/**
+ * Escape sequences for colors
+ */
+
+enum ColorsEnum: string
 {
-    // Line breaks
-    case nl = "\n";
-
-    // Styles
-    case clear = "\033[0m";
-    case bold = "\033[1m";
-    case dim = "\033[2m";
-    case italic = "\033[3m";
-    case underline = "\033[4m";
-    case reverse = "\033[7m";
-    case conceal = "\033[8m";
-    case strike = "\033[9m";
-    case double_underline = "\033[21m";
-
     // Foreground Colors
     case fg_black = "\033[30m";
     case fg_black_bright = "\033[90m";
@@ -53,21 +43,4 @@ enum EscapeCodesEnum: string
     case bg_cyan_bright = "\033[106m";
     case bg_white = "\033[47m";
     case bg_white_bright = "\033[107m";
-
-    /**
-     * Get cases as array
-     *
-     * @return array
-     */
-
-    public static function toArray(): array
-    {
-        $array = [];
-
-        foreach (self::cases() as $case) {
-            $array[$case->name] = $case->value;
-        }
-
-        return $array;
-    }
 }

@@ -28,9 +28,17 @@ final class Output implements OutputInterface
 
     public function __construct()
     {
-        // Convert EscapeCodesEnum to array
-        foreach (EscapeCodesEnum::toArray() as $key => $value) {
-            $this->formatPlaceholders['{' . $key . '}'] = $value;
+        // Get the format enums and prepare an array of usable placeholders
+        $enums = [
+            Enum\ColorsEnum::class,
+            Enum\ControlsEnum::class,
+            Enum\StylesEnum::class
+        ];
+
+        foreach ($enums as $enum) {
+            foreach ($enum::cases() as $case) {
+                $this->formatPlaceholders['{' . $case->name . '}'] = $case->value;
+            }
         }
     }
 
@@ -75,12 +83,12 @@ final class Output implements OutputInterface
     public function print(string $text, bool $finalNewLine = true, bool $autoclear = true, bool $raw = false): void
     {
         if ($finalNewLine) {
-            $text .= EscapeCodesEnum::nl->value;
+            $text .= Enum\ControlsEnum::nl->value;
         }
 
         if (!$raw) {
             $text = $this->format($text);
-            $text .= $autoclear ? EscapeCodesEnum::clear->value : null;
+            $text .= $autoclear ? Enum\StylesEnum::clear->value : null;
         }
 
         printf($text);
@@ -99,8 +107,8 @@ final class Output implements OutputInterface
     public function printTable(array $structure, int $columnsNumber, int $pad = 5, array $styles = []): void
     {
         $styles['heading'] = $styles['heading'] ?? [
-            "prefix" => EscapeCodesEnum::bold->value . EscapeCodesEnum::underline->value,
-            "suffix" => EscapeCodesEnum::clear->value
+            "prefix" => Enum\StylesEnum::bold->value . Enum\StylesEnum::underline->value,
+            "suffix" => Enum\StylesEnum::clear->value
         ];
 
         $styles['row'] = $styles['row'] ?? [
@@ -136,7 +144,7 @@ final class Output implements OutputInterface
             $mask .= "%-{$colWidth}.{$colWidth}s";
         }
 
-        $mask .= EscapeCodesEnum::nl->value;
+        $mask .= Enum\ControlsEnum::nl->value;
 
         foreach ($structure as $i => $row) {
             $type = array_keys($row)[0] ?? null;
@@ -165,8 +173,8 @@ final class Output implements OutputInterface
         bool $multiple = false,
         string $separator = " "
     ): mixed {
-        $value = readline($this->format($message) . " " . ($obfuscate ? EscapeCodesEnum::conceal->value : null));
-        printf(EscapeCodesEnum::clear->value);
+        $value = readline($this->format($message) . " " . ($obfuscate ? Enum\StylesEnum::conceal->value : null));
+        printf(Enum\StylesEnum::clear->value);
 
         return $multiple ? explode($separator, $value) : $value;
     }
