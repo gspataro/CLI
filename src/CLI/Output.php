@@ -15,14 +15,6 @@ final class Output implements OutputInterface
     private array $formatPlaceholders = [];
 
     /**
-     * Store stopwatches
-     *
-     * @var array
-     */
-
-    private array $stopwatches = [];
-
-    /**
      * Initialize Output object
      */
 
@@ -92,66 +84,5 @@ final class Output implements OutputInterface
         }
 
         printf($text);
-    }
-
-    /**
-     * Print a table to the console
-     *
-     * @param array $structure
-     * @param int $columnsNumber
-     * @param int $pad
-     * @param array $styles
-     * @return void
-     */
-
-    public function printTable(array $structure, int $columnsNumber, int $pad = 5, array $styles = []): void
-    {
-        $styles['heading'] = $styles['heading'] ?? [
-            "prefix" => Enum\StylesEnum::bold->value . Enum\StylesEnum::underline->value,
-            "suffix" => Enum\StylesEnum::clear->value
-        ];
-
-        $styles['row'] = $styles['row'] ?? [
-            "prefix" => "",
-            "suffix" => ""
-        ];
-
-        $mask = "";
-
-        for ($i = 0; $i < $columnsNumber; $i++) {
-            $colSize = 0;
-
-            foreach ($structure as $row) {
-                $cols = array_values($row)[0] ?? null;
-
-                if (is_null($cols)) {
-                    continue;
-                }
-
-                $colLength = strlen($cols[$i]);
-
-                if ($colLength > $colSize) {
-                    $colSize = $colLength;
-                }
-            }
-
-            $colWidth = $colSize;
-
-            if ($i < $columnsNumber - 1) {
-                $colWidth += $pad;
-            }
-
-            $mask .= "%-{$colWidth}.{$colWidth}s";
-        }
-
-        $mask .= Enum\ControlsEnum::nl->value;
-
-        foreach ($structure as $i => $row) {
-            $type = array_keys($row)[0] ?? null;
-            $cols = array_values($row)[0] ?? array_fill(0, $columnsNumber, null);
-            $style = $styles[$type] ?? $styles['row'];
-
-            call_user_func_array("printf", array_merge((array) ($style['prefix'] . $mask . $style['suffix']), $cols));
-        }
     }
 }
