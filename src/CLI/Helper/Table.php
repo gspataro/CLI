@@ -120,6 +120,19 @@ final class Table
     }
 
     /**
+     * Set row style
+     *
+     * @param string $name
+     * @param string $style
+     * @return void
+     */
+
+    public function setStyle(string $name, string $style): void
+    {
+        $this->styles[$name] = $style;
+    }
+
+    /**
      * Calculate the number of columns
      *
      * @return void
