@@ -2,6 +2,7 @@
 
 namespace GSpataro\CLI\Helper;
 
+use GSpataro\CLI\Enum\StylesEnum;
 use GSpataro\CLI\Interface\OutputInterface;
 
 final class Table
@@ -47,6 +48,14 @@ final class Table
     private string $padCharacter = ' ';
 
     /**
+     * Store table styles
+     *
+     * @var array
+     */
+
+    private array $styles = [];
+
+    /**
      * Initialize Table object
      *
      * @param OutputInterface $output
@@ -55,6 +64,10 @@ final class Table
     public function __construct(
         private readonly OutputInterface $output
     ) {
+        $this->styles = [
+            "heading" => StylesEnum::bold->value,
+            "row" => ""
+        ];
     }
 
     /**
@@ -73,13 +86,13 @@ final class Table
      * Add a row to the table
      *
      * @param array $cols
-     * @param string $rowType
+     * @param string $rowStyle
      * @return void
      */
 
-    public function addRow(array $cols, string $rowType = 'row'): void
+    public function addRow(array $cols, string $rowStyle = 'row'): void
     {
-        $this->structure[] = [$rowType => $cols];
+        $this->structure[] = [$rowStyle => $cols];
     }
 
     /**
@@ -172,8 +185,10 @@ final class Table
         $this->calculateWidths();
 
         foreach ($this->structure as $row) {
+            $rowStyle = array_keys($row)[0] ?? 'row';
             $cols = array_values($row)[0] ?? [];
             $colsCount = count($cols);
+            $style = $this->styles[$rowStyle] ?? $this->styles['row'];
 
             if ($colsCount < $this->colsNumber) {
                 $cols += array_fill($colsCount, $this->colsNumber - $colsCount, '');
@@ -192,7 +207,7 @@ final class Table
                     $colPad = '';
                 }
 
-                $this->output->print($col . $colPad, $i == ($this->colsNumber - 1));
+                $this->output->print($style . $col . $colPad, $i == ($this->colsNumber - 1));
             }
         }
     }
