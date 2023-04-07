@@ -125,7 +125,6 @@ final class Table
     public function render(): void
     {
         $this->calculateWidths();
-        //$table = [];
 
         foreach ($this->structure as $row) {
             $cols = array_values($row)[0];
@@ -141,7 +140,5 @@ final class Table
                 $this->output->print($col . $colPad, $i == ($this->colsNumber - 1));
             }
         }
-
-        //return $table;
     }
 }
