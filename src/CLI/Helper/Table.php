@@ -85,13 +85,13 @@ final class Table
     /**
      * Set the character used for padding
      *
-     * @param string $padCharacter
+     * @param string $character
      * @return void
      */
 
-    public function setPadCharacter(string $padCharacter): void
+    public function setPaddingCharacter(string $character): void
     {
-        $this->padCharacter = $padCharacter;
+        $this->padCharacter = $character;
     }
 
     /**
