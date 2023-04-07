@@ -62,6 +62,19 @@ final class Table
     }
 
     /**
+     * Add a row to the table
+     *
+     * @param array $cols
+     * @param string $rowType
+     * @return void
+     */
+
+    public function addRow(array $cols, string $rowType = 'row'): void
+    {
+        $this->structure[] = [$rowType => $cols];
+    }
+
+    /**
      * Calculate the number of columns
      *
      * @return void
