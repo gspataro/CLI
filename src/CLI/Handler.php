@@ -2,6 +2,8 @@
 
 namespace GSpataro\CLI;
 
+use GSpataro\CLI\Enum\StylesEnum;
+
 final class Handler
 {
     /**
@@ -32,43 +34,29 @@ final class Handler
         );
         $this->output->print("Available commands:");
 
-        $table = [];
+        $table = new Helper\Table($this->output);
+        $table->setStyle('row', StylesEnum::italic->value);
 
         foreach ($this->commands->getAll() as $commandName => $commandDefinition) {
-            $table[] = [
-                "heading" => [$commandName, $commandDefinition['description']]
-            ];
+            $table->addRow([$commandName, $commandDefinition['description']], 'heading');
 
             foreach ($commandDefinition['options'] as $optionName => $optionDefinition) {
                 $separator = is_null($optionDefinition['description']) ? null : " ";
                 $prefix = $optionDefinition['type'] == "required" ? "-" : "--";
                 $shortopt = $optionDefinition['short'] ? "{$prefix}{$optionDefinition['short']}, " : null;
 
-                $table[] = [
-                    "row" => [
-                        $shortopt . $prefix . $optionName,
-                        $optionDefinition['description'] .
-                        ($optionDefinition['type'] == "required" ? "{$separator}(required)" : null)
-                    ]
-                ];
+                $table->addRow([
+                    $shortopt . $prefix . $optionName,
+                    $optionDefinition['description'] .
+                    ($optionDefinition['type'] == "required" ? "{$separator}(required)" : null)
+                ]);
             }
 
-            $table[] = [];
+            $table->addSeparator();
         }
 
-        $table[] = [
-            "heading" => [
-                "help",
-                "List available commands"
-            ]
-        ];
-
-        $this->output->printTable($table, 2, 5, [
-            "row" => [
-                "prefix" => "\033[3m",
-                "suffix" => "\033[0m"
-            ]
-        ]);
+        $table->addRow(['help', 'List available commands'], 'heading');
+        $table->render();
     }
 
     /**

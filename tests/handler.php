@@ -2,6 +2,7 @@
 
 use GSpataro\CLI\Handler;
 use GSpataro\CLI\CommandsCollection;
+use GSpataro\CLI\Helper\Prompt;
 use GSpataro\CLI\Input;
 use GSpataro\CLI\Output;
 use GSpataro\Test\Utilities\TestCommand;
@@ -58,12 +59,17 @@ $commands->feed([
     "register" => [
         "callback" => function (Input $input, Output $output) {
             $output->print("Welcome to the registration prompt!{nl}");
+            $prompt = new Prompt($output);
 
-            $username = $output->prompt("Username:");
-            $password = $output->prompt("{fg_red}Password:", true);
-            $hobbies = $output->prompt("Hobbies:", false, true, ", ");
+            $username = $prompt->single('Username:');
+            $password = $prompt->conceal('{fg_red}Password:');
+            $hobbies = $prompt->multiple('Hobbies (separated by |):', '|');
 
-            $output->print("{fg_green}Welcome {$username}, your hobbies are: (" . implode(", ", $hobbies) . ")!");
+            $output->print(
+                "{fg_green}Welcome {$username}, your password is {$password} and your hobbies are: "
+                . implode(", ", $hobbies)
+                . "!"
+            );
         },
         "options" => [],
         "description" => "Register"
