@@ -128,6 +128,11 @@ final class Table
 
         foreach ($this->structure as $row) {
             $cols = array_values($row)[0];
+            $colsCount = count($cols);
+
+            if ($colsCount < $this->colsNumber) {
+                $cols += array_fill($colsCount, $this->colsNumber - $colsCount, '');
+            }
 
             foreach ($cols as $i => $col) {
                 $rawCol = $this->output->removeFormat($col);
