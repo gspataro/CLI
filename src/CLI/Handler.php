@@ -15,7 +15,7 @@ final class Handler
      */
 
     public function __construct(
-        private CommandsCollection $commands,
+        private readonly CommandsCollection $commands,
         private readonly Input $input = new Input(),
         private readonly Output $output = new Output()
     ) {
