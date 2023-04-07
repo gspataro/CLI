@@ -39,6 +39,14 @@ final class Table
     private array $colSizes = [];
 
     /**
+     * Store padding character
+     *
+     * @var string
+     */
+
+    private string $padCharacter = ' ';
+
+    /**
      * Initialize Table object
      *
      * @param OutputInterface $output
@@ -72,6 +80,18 @@ final class Table
     public function addRow(array $cols, string $rowType = 'row'): void
     {
         $this->structure[] = [$rowType => $cols];
+    }
+
+    /**
+     * Set the character used for padding
+     *
+     * @param string $padCharacter
+     * @return void
+     */
+
+    public function setPadCharacter(string $padCharacter): void
+    {
+        $this->padCharacter = $padCharacter;
     }
 
     /**
@@ -151,9 +171,14 @@ final class Table
                 $rawCol = $this->output->removeFormat($col);
                 $colLength = strlen($rawCol);
                 $colWidth = $this->colSizes[$i];
-                $colPad = $colLength < $colWidth
-                    ? str_repeat(' ', $colWidth + $this->colPad - $colLength)
-                    : str_repeat(' ', $this->colPad);
+
+                if ($i < ($this->colsNumber - 1)) {
+                    $colPad = $colLength < $colWidth
+                        ? str_repeat($this->padCharacter, $colWidth + $this->colPad - $colLength)
+                        : str_repeat($this->padCharacter, $this->colPad);
+                } else {
+                    $colPad = '';
+                }
 
                 $this->output->print($col . $colPad, $i == ($this->colsNumber - 1));
             }
