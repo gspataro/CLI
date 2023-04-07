@@ -117,7 +117,7 @@ final class Table
         $columns = [];
 
         foreach ($this->structure as $row) {
-            $cols = array_values($row)[0];
+            $cols = array_values($row)[0] ?? [];
 
             if (empty($cols)) {
                 continue;
@@ -144,7 +144,7 @@ final class Table
             $lengths = [0];
 
             foreach ($rows as $row) {
-                $cols = array_values($row)[0];
+                $cols = array_values($row)[0] ?? [];
 
                 if (empty($cols)) {
                     continue;
@@ -172,7 +172,7 @@ final class Table
         $this->calculateWidths();
 
         foreach ($this->structure as $row) {
-            $cols = array_values($row)[0];
+            $cols = array_values($row)[0] ?? [];
             $colsCount = count($cols);
 
             if ($colsCount < $this->colsNumber) {
