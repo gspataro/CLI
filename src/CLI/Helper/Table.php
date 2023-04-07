@@ -96,6 +96,17 @@ final class Table
     }
 
     /**
+     * Add a separator
+     *
+     * @return void
+     */
+
+    public function addSeparator(): void
+    {
+        $this->structure[] = [];
+    }
+
+    /**
      * Set the size of the padding between columns
      *
      * @param int $padding

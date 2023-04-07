@@ -20,8 +20,11 @@ $structure = [
 
 $basicTable = new Table($output);
 $basicTable->setRows($structure);
+$basicTable->addSeparator();
 $basicTable->addRow(['lorem', 'ipsum', 'dolor']);
 $basicTable->render();
+
+$output->print('');
 
 // Test custom padding
 
@@ -30,6 +33,8 @@ $customPaddingTable->setPadding(10);
 $customPaddingTable->setPaddingCharacter('.');
 $customPaddingTable->setRows($structure);
 $customPaddingTable->render();
+
+$output->print('');
 
 // Test custom styles
 
