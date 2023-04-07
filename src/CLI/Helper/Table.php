@@ -83,6 +83,18 @@ final class Table
     }
 
     /**
+     * Set the size of the padding between columns
+     *
+     * @param int $padding
+     * @return void
+     */
+
+    public function setPadding(int $padding): void
+    {
+        $this->colPad = $padding;
+    }
+
+    /**
      * Set the character used for padding
      *
      * @param string $character
