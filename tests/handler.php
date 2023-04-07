@@ -10,8 +10,6 @@ use GSpataro\Test\Utilities\TestCommand;
 require_once __DIR__ . "/bootstrap.php";
 
 $commands = new CommandsCollection();
-$input = new Input($argv);
-$output = new Output();
 
 $commands->feed([
     "set" => [
@@ -87,5 +85,5 @@ $commands->feed([
     ]
 ]);
 
-$handler = new Handler($commands, $input, $output);
+$handler = new Handler($commands);
 $handler->deploy();
