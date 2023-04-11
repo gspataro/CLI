@@ -1,6 +1,6 @@
 <?php
 
-namespace GSpataro\Test\Utilities;
+namespace Tests\Utilities;
 
 use GSpataro\CLI\Command;
 
