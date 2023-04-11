@@ -63,6 +63,30 @@ final class Output implements OutputInterface
     }
 
     /**
+     * Prepare a text to be printed
+     *
+     * @param string $text
+     * @param bool $finalNewLine
+     * @param bool $autoclear
+     * @param bool $raw
+     * @return string
+     */
+
+    public function prepare(string $text, bool $finalNewLine = true, bool $autoclear = true, bool $raw = false): string
+    {
+        if ($finalNewLine) {
+            $text .= Enum\ControlsEnum::nl->value;
+        }
+
+        if (!$raw) {
+            $text = $this->format($text);
+            $text .= $autoclear ? Enum\StylesEnum::clear->value : null;
+        }
+
+        return $text;
+    }
+
+    /**
      * Print text to the console
      *
      * @param string $text
@@ -74,15 +98,7 @@ final class Output implements OutputInterface
 
     public function print(string $text, bool $finalNewLine = true, bool $autoclear = true, bool $raw = false): void
     {
-        if ($finalNewLine) {
-            $text .= Enum\ControlsEnum::nl->value;
-        }
-
-        if (!$raw) {
-            $text = $this->format($text);
-            $text .= $autoclear ? Enum\StylesEnum::clear->value : null;
-        }
-
+        $text = $this->prepare($text, $finalNewLine, $autoclear, $raw);
         printf($text);
     }
 }
