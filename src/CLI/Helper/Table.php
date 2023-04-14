@@ -65,7 +65,7 @@ final class Table
         private readonly OutputInterface $output
     ) {
         $this->styles = [
-            "heading" => StylesEnum::bold->value,
+            "heading" => '{bold}',
             "row" => ""
         ];
     }
@@ -199,14 +199,16 @@ final class Table
     }
 
     /**
-     * Render the table
+     * Build the table and return the raw string
      *
-     * @return array
+     * @return string
      */
 
-    public function render(): void
+    public function build(): string
     {
         $this->calculateWidths();
+
+        $table = "";
 
         foreach ($this->structure as $row) {
             $rowStyle = array_keys($row)[0] ?? 'row';
@@ -231,8 +233,22 @@ final class Table
                     $colPad = '';
                 }
 
-                $this->output->print($style . $col . $colPad, $i == ($this->colsNumber - 1));
+                $table .= $this->output->prepare($style . $col . $colPad, $i == ($this->colsNumber - 1), true, true);
             }
         }
+
+        return $table;
+    }
+
+    /**
+     * Render the table
+     *
+     * @return array
+     */
+
+    public function render(): void
+    {
+        $table = $this->build();
+        $this->output->print($table);
     }
 }
