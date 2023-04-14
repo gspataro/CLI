@@ -36,8 +36,12 @@ final class CommandsCollection
      * @return void
      */
 
-    public function add(string $command, array|callable $callback, array $options = [], ?string $description = null): void
-    {
+    public function add(
+        string $command,
+        array|callable $callback,
+        array $options = [],
+        ?string $description = null
+    ): void {
         if ($this->has($command)) {
             throw new Exception\CommandFoundException(
                 "Command '{$command}' already exists in the collection."
@@ -53,7 +57,8 @@ final class CommandsCollection
 
             if (!isset($callback[1]) || !method_exists($callback[0], $callback[1])) {
                 throw new Exception\InvalidCommandCallbackException(
-                    "Invalid callback for command '{$command}'. The second element of the array must be a method of '" . $callback[0]::class . "'."
+                    "Invalid callback for command '{$command}'. The second element of the array must be a method of '"
+                    . $callback[0]::class . "'."
                 );
             }
         }
@@ -61,11 +66,14 @@ final class CommandsCollection
         foreach ($options as $option => &$definition) {
             if (!is_array($definition)) {
                 throw new Exception\InvalidCommandOptionsDefinitionException(
-                    "Invalid option '{$option}' definition for command '{$command}'. An option must include an empty array or an array with validation informations."
+                    "Invalid option '{$option}' definition for command '{$command}'." .
+                    "An option must include an empty array or an array with validation informations."
                 );
             }
 
-            $definition['type'] = in_array($definition['type'] ?? null, ['required', 'optional', 'novalue']) ? $definition['type'] : "optional";
+            $definition['type'] = in_array($definition['type'] ?? null, ['required', 'optional', 'novalue'])
+                ? $definition['type']
+                : "optional";
             $definition['short'] = $definition['short'] ?? null;
             $definition['description'] = $definition['description'] ?? null;
         }
