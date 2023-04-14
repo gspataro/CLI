@@ -75,12 +75,12 @@ final class Output implements OutputInterface
     public function prepare(string $text, bool $finalNewLine = true, bool $autoclear = true, bool $raw = false): string
     {
         if ($finalNewLine) {
-            $text .= Enum\ControlsEnum::nl->value;
+            $text .= '{nl}';
         }
 
         if (!$raw) {
+            $text .= $autoclear ? '{clear}' : null;
             $text = $this->format($text);
-            $text .= $autoclear ? Enum\StylesEnum::clear->value : null;
         }
 
         return $text;
