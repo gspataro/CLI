@@ -75,3 +75,24 @@ it('prints an help table', function () {
 
     expect($result)->toBe($expected);
 });
+
+it('can be translated', function () {
+    $this->manpage->setLocale('required', 'richiesto');
+    $this->manpage->setLocale('list_available_commands', 'Mostra comandi disponibili');
+    $this->manpage->render();
+    $table = $this->readPrivateProperty($this->manpage, 'table');
+    $result = $table->build();
+
+    $expected = '{bold}login             {clear}{bold}Sign in{clear}{nl}';
+    $expected .= '{italic}-e, -email        {clear}{italic}Your email address (richiesto){clear}{nl}';
+    $expected .= '{italic}-p, -password     {clear}{italic}Your password (richiesto){clear}{nl}';
+    $expected .= '{nl}';
+    $expected .= '{bold}register          {clear}{bold}Sign up{clear}{nl}';
+    $expected .= '{italic}-e, -email        {clear}{italic}Your email address (richiesto){clear}{nl}';
+    $expected .= '{italic}-p, -password     {clear}{italic}Choose a password (richiesto){clear}{nl}';
+    $expected .= '{italic}--name            {clear}{italic}Your full name{clear}{nl}';
+    $expected .= '{nl}';
+    $expected .= '{bold}help              {clear}{bold}Mostra comandi disponibili{clear}{nl}';
+
+    expect($result)->toBe($expected);
+});

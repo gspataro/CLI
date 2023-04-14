@@ -17,6 +17,14 @@ class Manpage
     private readonly Table $table;
 
     /**
+     * Store locale
+     *
+     * @var array
+     */
+
+    private array $locale = [];
+
+    /**
      * Initialize Manpage object
      *
      * @param CommandsCollection $commands
@@ -28,6 +36,27 @@ class Manpage
         private readonly InputInterface $input,
         private readonly OutputInterface $output
     ) {
+        $this->locale = [
+            'usage' => 'Usage',
+            'command' => 'command',
+            'option' => 'option',
+            'available_commands' => 'Available commands',
+            'required' => 'required',
+            'list_available_commands' => 'List available commands'
+        ];
+    }
+
+    /**
+     * Set locale string
+     *
+     * @param string $key
+     * @param string $value
+     * @return void
+     */
+
+    public function setLocale(string $key, string $value): void
+    {
+        $this->locale[$key] = $value;
     }
 
     /**
@@ -52,14 +81,14 @@ class Manpage
                 $this->table->addRow([
                     $shortopt . $prefix . $optionName,
                     $optionDefinition['description'] .
-                    ($optionDefinition['type'] == "required" ? "{$separator}(required)" : null)
+                    ($optionDefinition['type'] == "required" ? "{$separator}({$this->locale['required']})" : null)
                 ]);
             }
 
             $this->table->addSeparator();
         }
 
-        $this->table->addRow(['help', 'List available commands'], 'heading');
+        $this->table->addRow(['help', $this->locale['list_available_commands']], 'heading');
     }
 
     /**
@@ -73,9 +102,11 @@ class Manpage
         $this->prepareTable();
 
         $this->output->print(
-            "Usage: {$this->input->getScriptName()} {bold}{underline}command{clear} {italic}option{nl}"
+            "Usage: {$this->input->getScriptName()} " .
+            "{bold}{underline}{$this->locale['command']}{clear} " .
+            "{italic}{$this->locale['option']}{nl}"
         );
-        $this->output->print("Available commands:");
+        $this->output->print($this->locale['available_commands']);
         $this->table->render();
     }
 }
