@@ -2,7 +2,6 @@
 
 namespace GSpataro\CLI\Helper;
 
-use GSpataro\CLI\Enum\StylesEnum;
 use GSpataro\CLI\Interface\OutputInterface;
 
 final class Table
