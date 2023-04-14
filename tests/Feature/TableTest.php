@@ -3,6 +3,8 @@
 use GSpataro\CLI\Helper\Table;
 use GSpataro\CLI\Output;
 
+uses()->group('helpers');
+
 beforeEach(function () {
     $this->output = new Output();
     $this->table = new Table($this->output);

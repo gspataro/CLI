@@ -6,6 +6,8 @@ use GSpataro\CLI\CommandsCollection;
 use GSpataro\CLI\Interface\InputInterface;
 use GSpataro\CLI\Interface\OutputInterface;
 
+uses()->group('core');
+
 it('recognizes long options', function () {
     $collection = new CommandsCollection();
     $input = new Input(['script.php', 'set', '--key=foo', '--value=bar']);

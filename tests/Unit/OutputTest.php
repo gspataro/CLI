@@ -2,6 +2,8 @@
 
 use GSpataro\CLI\Output;
 
+uses()->group('io');
+
 beforeEach(function () {
     $this->output = new Output();
 });

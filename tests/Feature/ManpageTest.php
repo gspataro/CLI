@@ -5,7 +5,7 @@ use GSpataro\CLI\Output;
 use GSpataro\CLI\CommandsCollection;
 use GSpataro\CLI\Helper\Manpage;
 
-uses(\Tests\TestCase::class);
+uses(\Tests\TestCase::class)->group('helpers');
 
 beforeEach(function () {
     $this->input = new Input([

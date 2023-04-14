@@ -2,6 +2,8 @@
 
 use GSpataro\CLI\Helper\Stopwatch;
 
+uses()->group('helpers');
+
 it('returns a valid step', function () {
     $stopwatch = new Stopwatch();
     $startTime = $stopwatch->start();

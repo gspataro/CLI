@@ -6,7 +6,7 @@ use GSpataro\CLI\Exception\CommandNotFoundException;
 use GSpataro\CLI\Exception\InvalidCommandCallbackException;
 use GSpataro\CLI\Exception\IncompleteCommandDefinitionException;
 
-uses(\Tests\TestCase::class);
+uses(\Tests\TestCase::class)->group('core');
 
 beforeEach(function () {
     $this->commandsCollection = new CommandsCollection();

@@ -2,6 +2,8 @@
 
 use GSpataro\CLI\Input;
 
+uses()->group('io');
+
 beforeEach(function () {
     $this->input = new Input([
         'index.php',
