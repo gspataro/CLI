@@ -236,7 +236,7 @@ final class Table
 
         foreach ($cols as $i => $col) {
             $row .= $this->output->prepare(
-                $style . $this->buildColumn($i, $col),
+                $style . $this->buildColumn($i, $col ?? ''),
                 $i == ($this->colsNumber - 1),
                 true,
                 true
