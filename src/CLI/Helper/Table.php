@@ -216,6 +216,11 @@ final class Table
             $colsCount = count($cols);
             $style = $this->styles[$rowStyle] ?? $this->styles['row'];
 
+            if (empty($cols)) {
+                $table .= $this->output->prepare('', true, false, true);
+                continue;
+            }
+
             if ($colsCount < $this->colsNumber) {
                 $cols += array_fill($colsCount, $this->colsNumber - $colsCount, '');
             }
