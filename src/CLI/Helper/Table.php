@@ -236,7 +236,12 @@ final class Table
         $row = "";
 
         foreach ($cols as $i => $col) {
-            $row .= $this->output->prepare($style . $this->buildColumn($i, $col), $i == ($this->colsNumber - 1), true, true);
+            $row .= $this->output->prepare(
+                $style . $this->buildColumn($i, $col),
+                $i == ($this->colsNumber - 1),
+                true,
+                true
+            );
         }
 
         return $row;
