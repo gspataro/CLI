@@ -2,7 +2,10 @@
 
 namespace GSpataro\CLI;
 
+use GSpataro\CLI\Helper\Table;
 use GSpataro\CLI\Enum\StylesEnum;
+use GSpataro\CLI\Interface\InputInterface;
+use GSpataro\CLI\Interface\OutputInterface;
 
 final class Handler
 {
@@ -10,14 +13,14 @@ final class Handler
      * Initialize Handler object
      *
      * @param CommandsCollection $commands
-     * @param Input $input
-     * @param Output $output
+     * @param InputInterface $input
+     * @param OutputInterface $output
      */
 
     public function __construct(
         private readonly CommandsCollection $commands,
-        private readonly Input $input = new Input(),
-        private readonly Output $output = new Output()
+        private readonly InputInterface $input = new Input(),
+        private readonly OutputInterface $output = new Output()
     ) {
     }
 
@@ -34,7 +37,7 @@ final class Handler
         );
         $this->output->print("Available commands:");
 
-        $table = new Helper\Table($this->output);
+        $table = new Table($this->output);
         $table->setStyle('row', StylesEnum::italic->value);
 
         foreach ($this->commands->getAll() as $commandName => $commandDefinition) {
