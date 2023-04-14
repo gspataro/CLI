@@ -74,12 +74,15 @@ final class Output implements OutputInterface
 
     public function prepare(string $text, bool $finalNewLine = true, bool $autoclear = true, bool $raw = false): string
     {
+        if ($autoclear) {
+            $text .= '{clear}';
+        }
+
         if ($finalNewLine) {
             $text .= '{nl}';
         }
 
         if (!$raw) {
-            $text .= $autoclear ? '{clear}' : null;
             $text = $this->format($text);
         }
 
