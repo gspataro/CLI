@@ -2,70 +2,50 @@
 
 namespace GSpataro\CLI;
 
+use GSpataro\CLI\Helper\Manpage;
+use GSpataro\CLI\Interface\InputInterface;
+use GSpataro\CLI\Interface\OutputInterface;
+
 final class Handler
 {
+    /**
+     * Store manpage
+     *
+     * @var Manpage
+     */
+
+    private Manpage $manpage;
+
     /**
      * Initialize Handler object
      *
      * @param CommandsCollection $commands
-     * @param Input $input
-     * @param Output $output
+     * @param InputInterface $input
+     * @param OutputInterface $output
      */
 
     public function __construct(
-        private CommandsCollection $commands,
-        private Input $input,
-        private Output $output
+        private readonly CommandsCollection $commands,
+        private readonly InputInterface $input = new Input(),
+        private readonly OutputInterface $output = new Output()
     ) {
+        $this->manpage = new Manpage(
+            $this->commands,
+            $this->input,
+            $this->output
+        );
     }
 
     /**
-     * Generate commands manpage
+     * Set a different manpage helper
      *
+     * @param Manpage $manpage
      * @return void
      */
 
-    public function printManpage(): void
+    public function setManpage(Manpage $manpage): void
     {
-        $this->output->print("Usage: {$this->input->getScriptName()} {bold}{underline}command{clear} {italic}option{nl}");
-        $this->output->print("Available commands:");
-
-        $table = [];
-
-        foreach ($this->commands->getAll() as $commandName => $commandDefinition) {
-            $table[] = [
-                "heading" => [$commandName, $commandDefinition['description']]
-            ];
-
-            foreach ($commandDefinition['options'] as $optionName => $optionDefinition) {
-                $separator = is_null($optionDefinition['description']) ? null : " ";
-                $prefix = $optionDefinition['type'] == "required" ? "-" : "--";
-                $shortopt = $optionDefinition['short'] ? "{$prefix}{$optionDefinition['short']}, " : null;
-
-                $table[] = [
-                    "row" => [
-                        $shortopt . $prefix . $optionName,
-                        $optionDefinition['description'] . ($optionDefinition['type'] == "required" ? "{$separator}(required)" : null)
-                    ]
-                ];
-            }
-
-            $table[] = [];
-        }
-
-        $table[] = [
-            "heading" => [
-                "help",
-                "List available commands"
-            ]
-        ];
-
-        $this->output->printTable($table, 2, 5, [
-            "row" => [
-                "prefix" => "\033[3m",
-                "suffix" => "\033[0m"
-            ]
-        ]);
+        $this->manpage = $manpage;
     }
 
     /**
@@ -95,8 +75,10 @@ final class Handler
 
             if (!str_contains($arg, '=')) {
                 $key = substr($arg, $keyOffset);
-                $value = isset($args[$i+1]) && !str_starts_with($args[$i+1], '-') && $keyOffset == 1 ? $args[$i+1] : false;
-            } else if (str_contains($arg, '=') && $keyOffset == 2) {
+                $value = isset($args[$i + 1]) && !str_starts_with($args[$i + 1], '-') && $keyOffset == 1
+                    ? $args[$i + 1]
+                    : false;
+            } elseif (str_contains($arg, '=') && $keyOffset == 2) {
                 [$key, $value] = explode('=', $arg);
 
                 $key = substr($key, $keyOffset);
@@ -125,7 +107,7 @@ final class Handler
     public function deploy(): void
     {
         if ($this->input->getCommandName() == "help" || !$this->commands->has($this->input->getCommandName())) {
-            $this->printManpage();
+            $this->manpage->render();
             return;
         }
 
@@ -137,8 +119,12 @@ final class Handler
         $i = 0;
 
         foreach ($command['options'] as $optionName => $option) {
-            if (!isset($inputArgs[$optionName]) && !isset($inputArgs[$option['short']]) && $option['type'] == "required") {
-                $this->printManpage();
+            if (
+                !isset($inputArgs[$optionName]) &&
+                !isset($inputArgs[$option['short']]) &&
+                $option['type'] == "required"
+            ) {
+                $this->manpage->render();
                 return;
             }
 
