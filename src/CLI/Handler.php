@@ -2,13 +2,20 @@
 
 namespace GSpataro\CLI;
 
-use GSpataro\CLI\Helper\Table;
-use GSpataro\CLI\Enum\StylesEnum;
+use GSpataro\CLI\Helper\Manpage;
 use GSpataro\CLI\Interface\InputInterface;
 use GSpataro\CLI\Interface\OutputInterface;
 
 final class Handler
 {
+    /**
+     * Store manpage
+     *
+     * @var Manpage
+     */
+
+    private Manpage $manpage;
+
     /**
      * Initialize Handler object
      *
@@ -22,44 +29,23 @@ final class Handler
         private readonly InputInterface $input = new Input(),
         private readonly OutputInterface $output = new Output()
     ) {
+        $this->manpage = new Manpage(
+            $this->commands,
+            $this->input,
+            $this->output
+        );
     }
 
     /**
-     * Generate commands manpage
+     * Set a different manpage helper
      *
+     * @param Manpage $manpage
      * @return void
      */
 
-    public function printManpage(): void
+    public function setManpage(Manpage $manpage): void
     {
-        $this->output->print(
-            "Usage: {$this->input->getScriptName()} {bold}{underline}command{clear} {italic}option{nl}"
-        );
-        $this->output->print("Available commands:");
-
-        $table = new Table($this->output);
-        $table->setStyle('row', StylesEnum::italic->value);
-
-        foreach ($this->commands->getAll() as $commandName => $commandDefinition) {
-            $table->addRow([$commandName, $commandDefinition['description']], 'heading');
-
-            foreach ($commandDefinition['options'] as $optionName => $optionDefinition) {
-                $separator = is_null($optionDefinition['description']) ? null : " ";
-                $prefix = $optionDefinition['type'] == "required" ? "-" : "--";
-                $shortopt = $optionDefinition['short'] ? "{$prefix}{$optionDefinition['short']}, " : null;
-
-                $table->addRow([
-                    $shortopt . $prefix . $optionName,
-                    $optionDefinition['description'] .
-                    ($optionDefinition['type'] == "required" ? "{$separator}(required)" : null)
-                ]);
-            }
-
-            $table->addSeparator();
-        }
-
-        $table->addRow(['help', 'List available commands'], 'heading');
-        $table->render();
+        $this->manpage = $manpage;
     }
 
     /**
@@ -121,7 +107,7 @@ final class Handler
     public function deploy(): void
     {
         if ($this->input->getCommandName() == "help" || !$this->commands->has($this->input->getCommandName())) {
-            $this->printManpage();
+            $this->manpage->render();
             return;
         }
 
@@ -138,7 +124,7 @@ final class Handler
                 !isset($inputArgs[$option['short']]) &&
                 $option['type'] == "required"
             ) {
-                $this->printManpage();
+                $this->manpage->render();
                 return;
             }
 
