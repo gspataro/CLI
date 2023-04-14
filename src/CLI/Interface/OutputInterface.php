@@ -23,6 +23,18 @@ interface OutputInterface
     public function removeFormat(string $text): string;
 
     /**
+     * Prepare a text to be printed
+     *
+     * @param string $text
+     * @param bool $finalNewLine
+     * @param bool $autoclear
+     * @param bool $raw
+     * @return string
+     */
+
+    public function prepare(string $text, bool $finalNewLine = true, bool $autoclear = true, bool $raw = false): string;
+
+    /**
      * Print text to the console
      *
      * @param string $text
