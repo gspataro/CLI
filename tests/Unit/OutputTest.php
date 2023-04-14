@@ -33,7 +33,7 @@ it('returns a string without a new line', function () {
 });
 
 it('returns a string without formatting', function () {
-    $text = '{bold}lorem ipsum{clear}';
+    $text = '{bold}lorem ipsum';
     $result = $this->output->prepare(
         text: $text,
         finalNewLine: true,
@@ -43,7 +43,7 @@ it('returns a string without formatting', function () {
 
     expect($result)
         ->toBeString()
-        ->toBe($text . '{nl}');
+        ->toBe($text . '{clear}{nl}');
 });
 
 it('returns a string with autoclear', function () {
