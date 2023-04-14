@@ -199,6 +199,50 @@ final class Table
     }
 
     /**
+     * Build a column
+     *
+     * @param int $index
+     * @param string $value
+     * @return string
+     */
+
+    private function buildColumn(int $i, string $value): string
+    {
+        $rawCol = $this->output->removeFormat($value);
+        $colLength = strlen($rawCol);
+        $colWidth = $this->colSizes[$i];
+
+        if ($i < ($this->colsNumber - 1)) {
+            $colPad = $colLength < $colWidth
+                ? str_repeat($this->padCharacter, $colWidth + $this->colPad - $colLength)
+                : str_repeat($this->padCharacter, $this->colPad);
+        } else {
+            $colPad = '';
+        }
+
+        return $value . $colPad;
+    }
+
+    /**
+     * Build a row
+     *
+     * @param string $style
+     * @param array $row
+     * @return string
+     */
+
+    private function buildRow(string $style, array $cols): string
+    {
+        $row = "";
+
+        foreach ($cols as $i => $col) {
+            $row .= $this->output->prepare($style . $this->buildColumn($i, $col), $i == ($this->colsNumber - 1), true, true);
+        }
+
+        return $row;
+    }
+
+    /**
      * Build the table and return the raw string
      *
      * @return string
@@ -225,21 +269,7 @@ final class Table
                 $cols += array_fill($colsCount, $this->colsNumber - $colsCount, '');
             }
 
-            foreach ($cols as $i => $col) {
-                $rawCol = $this->output->removeFormat($col);
-                $colLength = strlen($rawCol);
-                $colWidth = $this->colSizes[$i];
-
-                if ($i < ($this->colsNumber - 1)) {
-                    $colPad = $colLength < $colWidth
-                        ? str_repeat($this->padCharacter, $colWidth + $this->colPad - $colLength)
-                        : str_repeat($this->padCharacter, $this->colPad);
-                } else {
-                    $colPad = '';
-                }
-
-                $table .= $this->output->prepare($style . $col . $colPad, $i == ($this->colsNumber - 1), true, true);
-            }
+            $table .= $this->buildRow($style, $cols);
         }
 
         return $table;
