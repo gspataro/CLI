@@ -27,6 +27,32 @@ final class CommandsCollection
     }
 
     /**
+     * Verify callback
+     *
+     * @param string $command
+     * @param array|callable $callback
+     * @return void
+     */
+
+    private function verifyCallback(string $command, array|callable $callback): void
+    {
+        if (is_array($callback)) {
+            if (!isset($callback[0]) || !$callback[0] instanceof Command) {
+                throw new Exception\InvalidCommandCallbackException(
+                    "Invalid callback for command '{$command}'. The first element of the array must be a class."
+                );
+            }
+
+            if (!isset($callback[1]) || !method_exists($callback[0], $callback[1])) {
+                throw new Exception\InvalidCommandCallbackException(
+                    "Invalid callback for command '{$command}'. The second element of the array must be a method of '"
+                    . $callback[0]::class . "'."
+                );
+            }
+        }
+    }
+
+    /**
      * Add an command to the collection
      *
      * @param string $command
@@ -48,20 +74,7 @@ final class CommandsCollection
             );
         }
 
-        if (is_array($callback)) {
-            if (!isset($callback[0]) || !$callback[0] instanceof Command) {
-                throw new Exception\InvalidCommandCallbackException(
-                    "Invalid callback for command '{$command}'. The first element of the array must be a class."
-                );
-            }
-
-            if (!isset($callback[1]) || !method_exists($callback[0], $callback[1])) {
-                throw new Exception\InvalidCommandCallbackException(
-                    "Invalid callback for command '{$command}'. The second element of the array must be a method of '"
-                    . $callback[0]::class . "'."
-                );
-            }
-        }
+        $this->verifyCallback($command, $callback);
 
         foreach ($options as $option => &$definition) {
             if (!is_array($definition)) {
