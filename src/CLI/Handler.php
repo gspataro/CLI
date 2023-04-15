@@ -131,12 +131,13 @@ final class Handler
             $this->output->print($this->header);
         }
 
-        if ($this->input->getCommandName() == "help" || !$this->commands->has($this->input->getCommandName())) {
+        $commandName = $this->input->getCommandName();
+
+        if ($commandName == "help" || !$this->commands->has($commandName)) {
             $this->manpage->render();
             return;
         }
 
-        $commandName = $this->input->getCommandName();
         $command = $this->commands->get($commandName);
 
         $inputArgs = $this->translateArguments($this->input->getArgs());
