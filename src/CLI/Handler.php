@@ -9,6 +9,14 @@ use GSpataro\CLI\Interface\OutputInterface;
 final class Handler
 {
     /**
+     * Store header
+     *
+     * @var string
+     */
+
+    private string $header;
+
+    /**
      * Store manpage
      *
      * @var Manpage
@@ -46,6 +54,19 @@ final class Handler
     public function setManpage(Manpage $manpage): void
     {
         $this->manpage = $manpage;
+    }
+
+    /**
+     * Set script header
+     * The header will be printed every time the script is executed
+     *
+     * @param string $text
+     * @return void
+     */
+
+    public function setHeader(string $text): void
+    {
+        $this->header = $text;
     }
 
     /**
@@ -106,6 +127,10 @@ final class Handler
 
     public function deploy(): void
     {
+        if (isset($this->header)) {
+            $this->output->print($this->header);
+        }
+
         if ($this->input->getCommandName() == "help" || !$this->commands->has($this->input->getCommandName())) {
             $this->manpage->render();
             return;
