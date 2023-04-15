@@ -58,9 +58,14 @@ final class Prompt
 
     public function conceal(string $message): mixed
     {
-        $value = readline($this->output->format($message) . " " . StylesEnum::conceal->value);
-        printf(StylesEnum::clear->value); // make sure the text is clear after the prompt
+        $this->output->print($message . ' ', false);
 
-        return $value;
+        $stream = popen("read -s; echo \$REPLY", "r");
+        $input = fgets($stream, 100);
+        pclose($stream);
+
+        print "\n";
+
+        return trim($input);
     }
 }
