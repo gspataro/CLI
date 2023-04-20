@@ -196,3 +196,32 @@ it('returns a table with style applied to rows and columns', function () {
 
     expect($result)->toEqual($expected);
 });
+
+it('returns a table with a separator', function () {
+    $structure = [
+        row(['Name', 'Surname', 'City'], 'heading'),
+        [],
+        row(["Wolfgang Amadeus", "Mozart", "Vienna"]),
+        [],
+        row(["Ludwig", "van Beethoven", "Bonn"]),
+        [],
+        row(["Sergej Vasil'Evic", "Rachmaninoff", "Moscow"]),
+        [],
+        row(["Vincenzo", "Bellini", "Catania"])
+    ];
+
+    $this->table->setRows($structure);
+    $result = $this->table->build();
+
+    $expected = "{bold}Name                  {clear}{bold}Surname           {clear}{bold}City{clear}{nl}";
+    $expected .= "{nl}";
+    $expected .= "Wolfgang Amadeus      {clear}Mozart            {clear}Vienna{clear}{nl}";
+    $expected .= "{nl}";
+    $expected .= "Ludwig                {clear}van Beethoven     {clear}Bonn{clear}{nl}";
+    $expected .= "{nl}";
+    $expected .= "Sergej Vasil'Evic     {clear}Rachmaninoff      {clear}Moscow{clear}{nl}";
+    $expected .= "{nl}";
+    $expected .= "Vincenzo              {clear}Bellini           {clear}Catania{clear}{nl}";
+
+    expect($result)->toEqual($expected);
+});
