@@ -20,7 +20,10 @@
     "autoload-dev": {
         "psr-4": {
             "Tests\\": "tests/"
-        }
+        },
+        "files": [
+            "src/CLI/Functions.php"
+        ]
     },
     "scripts": {
         "test": "pest"
