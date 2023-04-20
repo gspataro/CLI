@@ -190,7 +190,9 @@ final class Table
                     continue;
                 }
 
-                $lengths[] = strlen($cols[$i]);
+                $col = $cols[$i];
+                $colValue = is_array($col) ? (array_values($col)[0] ?? '') : $col;
+                $lengths[] = strlen($colValue);
             }
 
             $this->colSizes[$i] = max($lengths);
@@ -201,12 +203,16 @@ final class Table
      * Build a column
      *
      * @param int $index
-     * @param string $value
+     * @param array|string $col
      * @return string
      */
 
-    private function buildColumn(int $i, string $value): string
+    private function buildColumn(int $i, array|string $col): string
     {
+        $colStyle = is_array($col) ? (array_keys($col)[0] ?? '') : '';
+        $value = is_array($col) ? (array_values($col)[0] ?? '') : $col;
+        $style = $this->styles[$colStyle] ?? '';
+
         $rawCol = $this->output->removeFormat($value);
         $colLength = strlen($rawCol);
         $colWidth = $this->colSizes[$i];
@@ -219,7 +225,7 @@ final class Table
             $colPad = '';
         }
 
-        return $value . $colPad;
+        return $style . $value . $colPad;
     }
 
     /**
