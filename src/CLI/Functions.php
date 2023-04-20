@@ -13,7 +13,9 @@ if (!function_exists('row')) {
     {
         return [$style => $cols];
     }
+}
 
+if (!function_exists('col')) {
     /**
      * Returns a table column
      *
