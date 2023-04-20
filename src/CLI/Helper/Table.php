@@ -64,8 +64,8 @@ final class Table
         private readonly OutputInterface $output
     ) {
         $this->styles = [
-            "heading" => '{bold}',
-            "row" => ""
+            'heading' => '{bold}',
+            'row' => ''
         ];
     }
 
@@ -232,7 +232,7 @@ final class Table
 
     private function buildRow(string $style, array $cols): string
     {
-        $row = "";
+        $row = '';
 
         foreach ($cols as $i => $col) {
             $row .= $this->output->prepare(
@@ -256,7 +256,7 @@ final class Table
     {
         $this->calculateWidths();
 
-        $table = "";
+        $table = '';
 
         foreach ($this->structure as $row) {
             $rowStyle = array_keys($row)[0] ?? 'row';
