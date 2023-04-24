@@ -21,15 +21,13 @@ it('returns a table column', function () {
 });
 
 it('returns a basic table', function () {
-    $structure = [
+    $this->table->setRows(
         row(['Name', 'Surname', 'City'], 'heading'),
         row(["Wolfgang Amadeus", "Mozart", "Vienna"]),
         row(["Ludwig", "van Beethoven", "Bonn"]),
         row(["Sergej Vasil'Evic", "Rachmaninoff", "Moscow"]),
         row(["Vincenzo", "Bellini", "Catania"])
-    ];
-
-    $this->table->setRows($structure);
+    );
     $result = $this->table->build();
 
     $expected = "{bold}Name                  {clear}{bold}Surname           {clear}{bold}City{clear}{nl}";
@@ -42,15 +40,13 @@ it('returns a basic table', function () {
 });
 
 it('returns a basic table with empty columns', function () {
-    $structure = [
+    $this->table->setRows(
         row(["Name", "Surname", "City"], 'heading'),
         row(["Wolfgang Amadeus", "", "Vienna"]),
         row(["Ludwig", "van Beethoven"]),
         row(["Sergej Vasil'Evic", "Rachmaninoff", "Moscow"]),
         row(["Vincenzo", "Bellini"])
-    ];
-
-    $this->table->setRows($structure);
+    );
     $result = $this->table->build();
 
     $expected = "{bold}Name                  {clear}{bold}Surname           {clear}{bold}City{clear}{nl}";
@@ -63,14 +59,12 @@ it('returns a basic table with empty columns', function () {
 });
 
 it('add rows to the table', function () {
-    $structure = [
+    $this->table->setRows(
         row(["Name", "Surname", "City"], 'heading'),
         row(["Wolfgang Amadeus", "Mozart", "Vienna"]),
         row(["Ludwig", "van Beethoven", "Bonn"]),
         row(["Sergej Vasil'Evic", "Rachmaninoff", "Moscow"])
-    ];
-
-    $this->table->setRows($structure);
+    );
     $this->table->addRow(['Just', 'Another', 'Heading'], 'heading');
     $this->table->addRow(['Vincenzo', 'Bellini', 'Catania']);
     $result = $this->table->build();
@@ -86,14 +80,12 @@ it('add rows to the table', function () {
 });
 
 it('add separators to the table', function () {
-    $structure = [
+    $this->table->setRows(
         row(["Name", "Surname", "City"], 'heading'),
         row(["Wolfgang Amadeus", "Mozart", "Vienna"]),
         row(["Ludwig", "van Beethoven", "Bonn"]),
         row(["Sergej Vasil'Evic", "Rachmaninoff", "Moscow"])
-    ];
-
-    $this->table->setRows($structure);
+    );
     $this->table->addSeparator();
     $this->table->addRow(["Vincenzo", "Bellini", "Catania"]);
     $result = $this->table->build();
@@ -109,15 +101,13 @@ it('add separators to the table', function () {
 });
 
 it('customizes padding size', function () {
-    $structure = [
+    $this->table->setRows(
         row(["Name", "Surname", "City"], 'heading'),
         row(["Wolfgang Amadeus", "Mozart", "Vienna"]),
         row(["Ludwig", "van Beethoven", "Bonn"]),
         row(["Sergej Vasil'Evic", "Rachmaninoff", "Moscow"]),
         row(["Vincenzo", "Bellini", "Catania"])
-    ];
-
-    $this->table->setRows($structure);
+    );
     $this->table->setPadding(10);
     $result = $this->table->build();
 
@@ -131,15 +121,13 @@ it('customizes padding size', function () {
 });
 
 it('customizes padding character', function () {
-    $structure = [
+    $this->table->setRows(
         row(["Name", "Surname", "City"], 'heading'),
         row(["Wolfgang Amadeus", "Mozart", "Vienna"]),
         row(["Ludwig", "van Beethoven", "Bonn"]),
         row(["Sergej Vasil'Evic", "Rachmaninoff", "Moscow"]),
         row(["Vincenzo", "Bellini", "Catania"])
-    ];
-
-    $this->table->setRows($structure);
+    );
     $this->table->setPaddingCharacter('.');
     $result = $this->table->build();
 
@@ -153,18 +141,16 @@ it('customizes padding character', function () {
 });
 
 it('customizes table rows', function () {
-    $structure = [
+    $this->table->setStyle('heading', '{bg_green}{bold}');
+    $this->table->setStyle('row', '{bg_white}');
+    $this->table->setStyle('rowAlt', '{bg_white_bright}');
+    $this->table->setRows(
         row(["Name", "Surname", "City"], 'heading'),
         row(["Wolfgang Amadeus", "Mozart", "Vienna"], 'rowAlt'),
         row(["Ludwig", "van Beethoven", "Bonn"]),
         row(["Sergej Vasil'Evic", "Rachmaninoff", "Moscow"], 'rowAlt'),
         row(["Vincenzo", "Bellini", "Catania"])
-    ];
-
-    $this->table->setStyle('heading', '{bg_green}{bold}');
-    $this->table->setStyle('row', '{bg_white}');
-    $this->table->setStyle('rowAlt', '{bg_white_bright}');
-    $this->table->setRows($structure);
+    );
     $result = $this->table->build();
 
     $expected = "{bg_green}{bold}Name                  {clear}{bg_green}{bold}Surname           {clear}{bg_green}{bold}City{clear}{nl}";
@@ -177,15 +163,13 @@ it('customizes table rows', function () {
 });
 
 it('returns a table with style applied to rows and columns', function () {
-    $structure = [
+    $this->table->setRows(
         row(['Name', 'Surname', 'City'], 'heading'),
         row([col("Wolfgang Amadeus", 'heading'), "Mozart", "Vienna"]),
         row([col("Ludwig", 'heading'), "van Beethoven", "Bonn"]),
         row([col("Sergej Vasil'Evic", 'heading'), "Rachmaninoff", "Moscow"]),
         row([col("Vincenzo", 'heading'), "Bellini", "Catania"])
-    ];
-
-    $this->table->setRows($structure);
+    );
     $result = $this->table->build();
 
     $expected = "{bold}Name                  {clear}{bold}Surname           {clear}{bold}City{clear}{nl}";
@@ -198,7 +182,7 @@ it('returns a table with style applied to rows and columns', function () {
 });
 
 it('returns a table with a separator', function () {
-    $structure = [
+    $this->table->setRows(
         row(['Name', 'Surname', 'City'], 'heading'),
         [],
         row(["Wolfgang Amadeus", "Mozart", "Vienna"]),
@@ -208,9 +192,7 @@ it('returns a table with a separator', function () {
         row(["Sergej Vasil'Evic", "Rachmaninoff", "Moscow"]),
         [],
         row(["Vincenzo", "Bellini", "Catania"])
-    ];
-
-    $this->table->setRows($structure);
+    );
     $result = $this->table->build();
 
     $expected = "{bold}Name                  {clear}{bold}Surname           {clear}{bold}City{clear}{nl}";
