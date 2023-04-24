@@ -73,10 +73,10 @@ final class Table
      * Set table rows
      *
      * @param array $rows
-     * @return static
+     * @return void
      */
 
-    public function setRows(array $rows): void
+    public function setRows(array ...$rows): void
     {
         $this->structure = $rows;
     }
