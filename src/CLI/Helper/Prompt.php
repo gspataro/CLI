@@ -2,7 +2,7 @@
 
 namespace GSpataro\CLI\Helper;
 
-use GSpataro\CLI\Enum\StylesEnum;
+use GSpataro\CLI\Interface\InputInterface;
 use GSpataro\CLI\Interface\OutputInterface;
 
 final class Prompt
@@ -14,8 +14,20 @@ final class Prompt
      */
 
     public function __construct(
+        private readonly InputInterface $input,
         private readonly OutputInterface $output
     ) {
+    }
+
+    /**
+     * Get user input
+     *
+     * @return mixed
+     */
+
+    private function getUserInput(): mixed
+    {
+        return trim(fgets($this->input->getStandardInput()));
     }
 
     /**
@@ -27,10 +39,10 @@ final class Prompt
 
     public function single(string $message): mixed
     {
-        $value = readline($this->output->format($message) . " ");
-        printf(StylesEnum::clear->value); // make sure the text is clear after the prompt
+        $this->output->print($message . ' ', false);
+        $input = $this->getUserInput();
 
-        return $value;
+        return $input;
     }
 
     /**
@@ -43,10 +55,10 @@ final class Prompt
 
     public function multiple(string $message, string $separator = ', '): mixed
     {
-        $value = readline($this->output->format($message) . " ");
-        printf(StylesEnum::clear->value); // make sure the text is clear after the prompt
+        $this->output->print($message . ' ', false);
+        $input = $this->getUserInput();
 
-        return explode($separator, $value);
+        return explode($separator, $input);
     }
 
     /**
@@ -60,11 +72,11 @@ final class Prompt
     {
         $this->output->print($message . ' ', false);
 
-        $stream = popen("read -s; echo \$REPLY", "r");
-        $input = fgets($stream, 100);
-        pclose($stream);
+        system('stty -echo');
+        $input = $this->getUserInput();
+        system('stty echo');
 
-        print "\n";
+        print(PHP_EOL);
 
         return trim($input);
     }
