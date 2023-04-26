@@ -27,4 +27,12 @@ interface InputInterface
      */
 
     public function getArgs(): array;
+
+    /**
+     * Get standard input
+     *
+     * @return mixed
+     */
+
+    public function getStandardInput(): mixed;
 }

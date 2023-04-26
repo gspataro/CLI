@@ -34,15 +34,21 @@ final class Input implements InputInterface
      * Initialize Input object
      *
      * @param array|null $argv
+     * @param mixed $standardInput
      */
 
     public function __construct(
-        private ?array $argv = null
+        private ?array $argv = null,
+        private readonly mixed $standardInput = STDIN
     ) {
         $this->argv = $this->argv ?? $_SERVER['argv'];
         $this->scriptName = $this->argv[0];
         $this->commandName = $this->argv[1] ?? "help";
         $this->args = array_slice($this->argv, 2);
+
+        if (!is_resource($standardInput)) {
+            throw new Exception\InvalidResourceException("Invalid resource provided as standard input.");
+        }
     }
 
     /**
@@ -76,5 +82,16 @@ final class Input implements InputInterface
     public function getArgs(): array
     {
         return $this->args;
+    }
+
+    /**
+     * Get standard input
+     *
+     * @return mixed
+     */
+
+    public function getStandardInput(): mixed
+    {
+        return $this->standardInput;
     }
 }
