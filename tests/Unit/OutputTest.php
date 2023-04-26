@@ -5,16 +5,29 @@ use GSpataro\CLI\Output;
 uses()->group('io');
 
 beforeEach(function () {
+    ob_start();
+    $this->outputBufferingLevel = ob_get_level();
+
     $this->output = new Output();
 });
 
+afterEach(function () {
+    if ($this->outputBufferingLevel !== ob_get_level()) {
+        while (ob_get_level() >= $this->outputBufferingLevel) {
+            ob_end_clean();
+        }
+    }
+});
+
 it('returns a string with a new line', function () {
-    $result = $this->output->prepare(
+    $this->output->print(
         text: 'lorem ipsum',
         finalNewLine: true,
         autoclear: false,
         raw: false
     );
+
+    $result = ob_get_clean();
 
     expect($result)
         ->toBeString()
@@ -22,12 +35,14 @@ it('returns a string with a new line', function () {
 });
 
 it('returns a string without a new line', function () {
-    $result = $this->output->prepare(
+    $this->output->print(
         text: 'lorem ipsum',
         finalNewLine: false,
         autoclear: false,
         raw: false
     );
+
+    $result = ob_get_clean();
 
     expect($result)
         ->toBeString()
@@ -36,12 +51,14 @@ it('returns a string without a new line', function () {
 
 it('returns a string without formatting', function () {
     $text = '{bold}lorem ipsum';
-    $result = $this->output->prepare(
+    $this->output->print(
         text: $text,
         finalNewLine: true,
         autoclear: true,
         raw: true
     );
+
+    $result = ob_get_clean();
 
     expect($result)
         ->toBeString()
@@ -49,12 +66,14 @@ it('returns a string without formatting', function () {
 });
 
 it('returns a string with autoclear', function () {
-    $result = $this->output->prepare(
+    $this->output->print(
         text: 'lorem ipsum',
         finalNewLine: false,
         autoclear: true,
         raw: false
     );
+
+    $result = ob_get_clean();
 
     expect($result)
         ->toBeString()
@@ -62,12 +81,14 @@ it('returns a string with autoclear', function () {
 });
 
 it('returns a string without autoclear', function () {
-    $result = $this->output->prepare(
+    $this->output->print(
         text: 'lorem ipsum',
         finalNewLine: false,
         autoclear: false,
         raw: false
     );
+
+    $result = ob_get_clean();
 
     expect($result)
         ->toBeString()
@@ -75,12 +96,14 @@ it('returns a string without autoclear', function () {
 });
 
 it('returns a formatted string', function () {
-    $result = $this->output->prepare(
+    $this->output->print(
         text: "{bold}lorem ipsum",
         finalNewLine: false,
         autoclear: true,
         raw: false
     );
+
+    $result = ob_get_clean();
 
     expect($result)
         ->toBeString()
