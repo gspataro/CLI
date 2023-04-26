@@ -26,7 +26,10 @@
         ]
     },
     "scripts": {
-        "test": "pest"
+        "test": "pest",
+        "test:core": "pest --group=core",
+        "test:io": "pest --group=io",
+        "test:helpers": "pest --group=helpers"
     },
     "config": {
         "allow-plugins": {
