@@ -80,4 +80,58 @@ final class Prompt
 
         return trim($input);
     }
+
+    /**
+     * Create a prompt that accepts yes/no user input
+     *
+     * @param string $message
+     * @return bool
+     */
+
+    public function confirm(string $message): bool
+    {
+        $this->output->print($message . ' ', false);
+        $input = $this->getUserInput();
+        $acceptedAnswers = [
+            'y',
+            'Y',
+            'yes',
+            'YES',
+            'no',
+            'NO',
+            'n',
+            'N'
+        ];
+
+        if (!in_array($input, $acceptedAnswers)) {
+            return $this->confirm($message);
+        }
+
+        return strtolower($input) == 'y' || strtolower($input) == 'yes' ? true : false;
+    }
+
+    /**
+     * Create a prompt that accepts user choice
+     *
+     * @param string $message
+     * @param array $choices
+     * @return int|string
+     */
+
+    public function choice(string $message, array $choices): int|string
+    {
+        foreach ($choices as $i => $choice) {
+            $this->output->print($i . ' - ' . $choice);
+        }
+
+        $this->output->print('{nl}' . $message . ' ', false);
+
+        $input = $this->getUserInput();
+
+        if (!in_array($input, array_keys($choices))) {
+            return $this->choice($message, $choices);
+        }
+
+        return $input;
+    }
 }
