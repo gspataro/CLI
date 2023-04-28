@@ -3,6 +3,7 @@
 namespace GSpataro\CLI;
 
 use GSpataro\CLI\Exception\CommandNotFoundException;
+use GSpataro\CLI\Helper\BaseCommand;
 
 final class CommandsCollection
 {
@@ -37,16 +38,23 @@ final class CommandsCollection
     private function verifyCallback(string $command, array|callable $callback): void
     {
         if (is_array($callback)) {
-            if (!isset($callback[0]) || !$callback[0] instanceof Command) {
+            if (!isset($callback[0]) || !is_object($callback[0])) {
                 throw new Exception\InvalidCommandCallbackException(
-                    "Invalid callback for command '{$command}'. The first element of the array must be a class."
+                    "Invalid callback for command '{$command}'. The first element of the array must be an object."
+                );
+            }
+
+            if (!$callback[0] instanceof BaseCommand) {
+                throw new Exception\InvalidCommandCallbackException(
+                    "Invalid callback for command '{$command}'. " .
+                    "The command object must extend the GSpataro\\CLI\\Helper\\BaseCommand class"
                 );
             }
 
             if (!isset($callback[1]) || !method_exists($callback[0], $callback[1])) {
                 throw new Exception\InvalidCommandCallbackException(
-                    "Invalid callback for command '{$command}'. The second element of the array must be a method of '"
-                    . $callback[0]::class . "'."
+                    "Invalid callback for command '{$command}'. " .
+                    "The second element of the array must be a method of '" . $callback[0]::class . "'."
                 );
             }
         }
