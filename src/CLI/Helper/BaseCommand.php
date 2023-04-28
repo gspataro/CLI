@@ -1,11 +1,11 @@
 <?php
 
-namespace GSpataro\CLI;
+namespace GSpataro\CLI\Helper;
 
 use GSpataro\CLI\Interface\InputInterface;
 use GSpataro\CLI\Interface\OutputInterface;
 
-abstract class Command
+abstract class BaseCommand
 {
     protected readonly InputInterface $input;
     protected readonly OutputInterface $output;
