@@ -21,12 +21,29 @@ interface InputInterface
     public function getCommandName(): string;
 
     /**
-     * Get other arguments
+     * Get raw arguments
+     *
+     * @return array
+     */
+
+    public function getRawArgs(): array;
+
+    /**
+     * Get arguments
      *
      * @return array
      */
 
     public function getArgs(): array;
+
+    /**
+     * Get a single argument
+     *
+     * @param string $name
+     * @return mixed
+     */
+
+    public function getArg(string $name): mixed;
 
     /**
      * Get standard input
