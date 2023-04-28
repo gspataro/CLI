@@ -34,11 +34,18 @@ it('adds a command', function () {
     ]);
 });
 
-it('throws an exception with an invalid command callback class', function () {
+it('throw an exception with an invalid command callback class', function () {
+    $this->commandsCollection->add('test', ['invalid', 'method'], []);
+})->throws(
+    InvalidCommandCallbackException::class,
+    "Invalid callback for command 'test'. The first element of the array must be an object."
+);
+
+it('throws an exception with an invalid command callback class (not extending base command)', function () {
     $this->commandsCollection->add('test', [new \Tests\Utilities\InvalidController(), 'method'], []);
 })->throws(
     InvalidCommandCallbackException::class,
-    "Invalid callback for command 'test'. The first element of the array must be a class."
+    "Invalid callback for command 'test'. The command object must extend the GSpataro\\CLI\\Helper\\BaseCommand class"
 );
 
 it('throws an exception with an invalid command callback method', function () {
