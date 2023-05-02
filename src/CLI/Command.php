@@ -126,10 +126,10 @@ final class Command
     /**
      * Get command callback
      *
-     * @return callable
+     * @return BaseCommand|string|callable
      */
 
-    public function getCallback(): callable
+    public function getCallback(): BaseCommand|string|callable
     {
         return $this->callback;
     }
