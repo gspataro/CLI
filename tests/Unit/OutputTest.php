@@ -2,22 +2,13 @@
 
 use GSpataro\CLI\Output;
 
-uses()->group('io');
+uses(\Tests\TestCase::class)->group('io');
 
 beforeEach(function () {
-    ob_start();
-    $this->outputBufferingLevel = ob_get_level();
-
     $this->output = new Output();
-});
+})->startOutputBuffer();
 
-afterEach(function () {
-    if ($this->outputBufferingLevel !== ob_get_level()) {
-        while (ob_get_level() >= $this->outputBufferingLevel) {
-            ob_end_clean();
-        }
-    }
-});
+afterEach()->endOutputBuffer();
 
 it('returns a string with a new line', function () {
     $this->output->print(
@@ -27,7 +18,7 @@ it('returns a string with a new line', function () {
         raw: false
     );
 
-    $result = ob_get_clean();
+    $result = $this->getOutput();
 
     expect($result)
         ->toBeString()
@@ -42,7 +33,7 @@ it('returns a string without a new line', function () {
         raw: false
     );
 
-    $result = ob_get_clean();
+    $result = $this->getOutput();
 
     expect($result)
         ->toBeString()
@@ -58,7 +49,7 @@ it('returns a string without formatting', function () {
         raw: true
     );
 
-    $result = ob_get_clean();
+    $result = $this->getOutput();
 
     expect($result)
         ->toBeString()
@@ -73,7 +64,7 @@ it('returns a string with autoclear', function () {
         raw: false
     );
 
-    $result = ob_get_clean();
+    $result = $this->getOutput();
 
     expect($result)
         ->toBeString()
@@ -88,7 +79,7 @@ it('returns a string without autoclear', function () {
         raw: false
     );
 
-    $result = ob_get_clean();
+    $result = $this->getOutput();
 
     expect($result)
         ->toBeString()
@@ -103,7 +94,7 @@ it('returns a formatted string', function () {
         raw: false
     );
 
-    $result = ob_get_clean();
+    $result = $this->getOutput();
 
     expect($result)
         ->toBeString()
