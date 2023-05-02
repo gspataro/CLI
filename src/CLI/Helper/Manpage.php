@@ -70,18 +70,27 @@ class Manpage
         $this->table = new Table($this->output);
         $this->table->setStyle('row', '{italic}');
 
-        foreach ($this->commands->getAll() as $commandName => $commandDefinition) {
-            $this->table->addRow([$commandName, $commandDefinition['description']], 'heading');
+        foreach ($this->commands->getAll() as $commandName => $command) {
+            $this->table->addRow([$commandName, $command->getDescription()], 'heading');
 
-            foreach ($commandDefinition['options'] as $optionName => $optionDefinition) {
-                $separator = is_null($optionDefinition['description']) ? null : " ";
-                $prefix = $optionDefinition['type'] == "required" ? "-" : "--";
-                $shortopt = $optionDefinition['short'] ? "{$prefix}{$optionDefinition['short']}, " : null;
+            foreach ($command->getOptions() as $optionName => $option) {
+                $separator = is_null($option['description']) ? null : " ";
+                $prefix = $option['type'] == "required" ? "-" : "--";
+                $longopt = $option['longname'] ?? null;
+                $shortopt = $option['shortname'] ?? null;
+
+                if ($longopt && !$shortopt) {
+                    $names = $prefix . $longopt;
+                } elseif (!$longopt && $shortopt) {
+                    $names = $prefix . $shortopt;
+                } else {
+                    $names = $prefix . $shortopt . ', ' . $prefix . $longopt;
+                }
 
                 $this->table->addRow([
-                    $shortopt . $prefix . $optionName,
-                    $optionDefinition['description'] .
-                    ($optionDefinition['type'] == "required" ? "{$separator}({$this->locale['required']})" : null)
+                    $names,
+                    $option['description'] .
+                    ($option['type'] == "required" ? "{$separator}({$this->locale['required']})" : null)
                 ]);
             }
 

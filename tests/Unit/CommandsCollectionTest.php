@@ -1,10 +1,9 @@
 <?php
 
+use GSpataro\CLI\Command;
 use GSpataro\CLI\CommandsCollection;
 use GSpataro\CLI\Exception\CommandFoundException;
 use GSpataro\CLI\Exception\CommandNotFoundException;
-use GSpataro\CLI\Exception\InvalidCommandCallbackException;
-use GSpataro\CLI\Exception\IncompleteCommandDefinitionException;
 
 uses(\Tests\TestCase::class)->group('core');
 
@@ -15,31 +14,38 @@ beforeEach(function () {
 it('verifies that a command exists', function () {
     expect($this->commandsCollection->has('test'))->toBeFalse();
 
-    $this->setPrivateProperty($this->commandsCollection, 'commands', ['test' => []]);
+    $this->setPrivateProperty($this->commandsCollection, 'commands', ['test' => new Command('test')]);
 
     expect($this->commandsCollection->has('test'))->toBeTrue();
 });
 
+it('registers a command', function () {
+    $command = new Command('test');
+
+    $this->commandsCollection->register($command);
+
+    $commands = $this->readPrivateProperty($this->commandsCollection, 'commands');
+
+    expect($commands['test'])->toBe($command);
+});
+
 it('adds a command', function () {
     $callback = fn() => 'bar';
-    $options = [];
+    $options = [
+        [
+            'longname' => 'foo'
+        ]
+    ];
 
     $this->commandsCollection->add('foo', $callback, $options);
 
     $commands = $this->readPrivateProperty($this->commandsCollection, 'commands');
-    expect($commands['foo'])->toEqual([
-        'callback' => $callback,
-        'options' => $options,
-        'description' => null
-    ]);
-});
+    $expected = new Command('foo');
+    $expected->setCallback($callback);
+    $expected->setOptions($options);
 
-it('throws an exception with an invalid command callback class (not extending base command)', function () {
-    $this->commandsCollection->add('test', [new \Tests\Utilities\InvalidController(), 'method'], []);
-})->throws(
-    InvalidCommandCallbackException::class,
-    "Invalid callback for command 'test'. The command object must extend the GSpataro\\CLI\\Helper\\BaseCommand class"
-);
+    expect($commands['foo'])->toEqual($expected);
+});
 
 it('throws an exception if a command already exists', function () {
     $this->commandsCollection->add('test', fn() => 'first', []);
@@ -49,23 +55,27 @@ it('throws an exception if a command already exists', function () {
     "Command 'test' already exists in the collection."
 );
 
-it('throws an exception for incomplete command definitions', function () {
-    $this->commandsCollection->feed([
-        'test' => []
-    ]);
+it('throws an exception if a command was already registered', function () {
+    $command = new Command('test');
+    $this->commandsCollection->register($command);
+    $this->commandsCollection->register($command);
 })->throws(
-    IncompleteCommandDefinitionException::class,
-    "Incomplete command 'test' definition. A command must include at least a valid callback."
+    CommandFoundException::class,
+    "Command 'test' already exists in the collection."
 );
 
 it('returns a command', function () {
+    $firstCommand = new Command('first');
+    $secondCommand = new Command('second');
+
     $this->setPrivateProperty($this->commandsCollection, 'commands', [
-        'test' => []
+        'first' => $firstCommand,
+        'second' => $secondCommand
     ]);
 
-    $result = $this->commandsCollection->get('test');
+    $result = $this->commandsCollection->get('first');
 
-    expect($result)->toBe([]);
+    expect($result)->toBe($firstCommand);
 });
 
 it('throws an exception when a command doesn\'t exist', function () {

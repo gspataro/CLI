@@ -13,13 +13,23 @@ it('recognizes long options', function () {
     $input = new Input(['script.php', 'set', '--key=foo', '--value=bar']);
     $result = [];
 
-    $collection->add('set', function (InputInterface $input, OutputInterface $output, string $key, string $value) use (&$result) {
-        $result['key'] = $key;
-        $result['value'] = $value;
-    }, [
-        'key' => ['type' => 'required'],
-        'value' => ['type' => 'required']
-    ]);
+    $collection->add(
+        'set',
+        function (InputInterface $input, OutputInterface $output, string $key, string $value) use (&$result) {
+            $result['key'] = $key;
+            $result['value'] = $value;
+        },
+        [
+            'key' => [
+                'longname' => 'key',
+                'type' => 'required'
+            ],
+            'value' => [
+                'longname' => 'value',
+                'type' => 'required'
+            ]
+        ]
+    );
 
     $handler = new Handler($collection, $input);
     $handler->deploy();
@@ -35,13 +45,23 @@ it('recognizes short options', function () {
     $input = new Input(['script.php', 'set', '-k', 'foo', '-v', 'bar']);
     $result = [];
 
-    $collection->add('set', function (InputInterface $input, OutputInterface $output, string $key, string $value) use (&$result) {
-        $result['key'] = $key;
-        $result['value'] = $value;
-    }, [
-        'key' => ['type' => 'required', 'short' => 'k'],
-        'value' => ['type' => 'required', 'short' => 'v']
-    ]);
+    $collection->add(
+        'set',
+        function (InputInterface $input, OutputInterface $output, string $key, string $value) use (&$result) {
+            $result['key'] = $key;
+            $result['value'] = $value;
+        },
+        [
+            'key' => [
+                'shortname' => 'k',
+                'type' => 'required'
+            ],
+            'value' => [
+                'shortname' => 'v',
+                'type' => 'required'
+            ]
+        ]
+    );
 
     $handler = new Handler($collection, $input);
     $handler->deploy();
@@ -57,13 +77,23 @@ it('recognizes required options', function () {
     $input = new Input(['script.php', 'set', '--key=foo']);
     $result = [];
 
-    $collection->add('set', function (InputInterface $input, OutputInterface $output, string $key, string $value) use (&$result) {
-        $result['key'] = $key;
-        $result['value'] = $value;
-    }, [
-        'key' => ['type' => 'required'],
-        'value' => ['type' => 'required']
-    ]);
+    $collection->add(
+        'set',
+        function (InputInterface $input, OutputInterface $output, string $key, string $value) use (&$result) {
+            $result['key'] = $key;
+            $result['value'] = $value;
+        },
+        [
+            'key' => [
+                'longname' => 'key',
+                'type' => 'required'
+            ],
+            'value' => [
+                'longname' => 'value',
+                'type' => 'required'
+            ]
+        ]
+    );
 
     $handler = new Handler($collection, $input);
     $handler->deploy();
@@ -76,24 +106,40 @@ it('recognizes optional options', function () {
     $input = new Input(['script.php', 'set', '--key=foo', '--value=bar', '--type=config']);
     $result = [];
 
-    $collection->add('set', function (
-        InputInterface $input,
-        OutputInterface $output,
-        string $key,
-        string $value,
-        ?string $type,
-        ?string $description
-    ) use (&$result) {
-        $result['key'] = $key;
-        $result['value'] = $value;
-        $result['type'] = $type;
-        $result['description'] = $description ?? 'not set';
-    }, [
-        'key' => ['type' => 'required'],
-        'value' => ['type' => 'required'],
-        'type' => ['type' => 'optional'],
-        'description' => ['type' => 'optional']
-    ]);
+    $collection->add(
+        'set',
+        function (
+            InputInterface $input,
+            OutputInterface $output,
+            string $key,
+            string $value,
+            ?string $type,
+            ?string $description
+        ) use (&$result) {
+            $result['key'] = $key;
+            $result['value'] = $value;
+            $result['type'] = $type;
+            $result['description'] = $description ?? 'not set';
+        },
+        [
+            'key' => [
+                'longname' => 'key',
+                'type' => 'required'
+            ],
+            'value' => [
+                'longname' => 'value',
+                'type' => 'required'
+            ],
+            'type' => [
+                'longname' => 'type',
+                'type' => 'optional'
+            ],
+            'description' => [
+                'longname' => 'description',
+                'type' => 'optional'
+            ]
+        ]
+    );
 
     $handler = new Handler($collection, $input);
     $handler->deploy();
@@ -111,21 +157,34 @@ it('recognizes novalue options', function () {
     $input = new Input(['script.php', 'set', '--key=foo', '--overwrite', '--value=bar']);
     $result = [];
 
-    $collection->add('set', function (
-        InputInterface $input,
-        OutputInterface $output,
-        string $key,
-        string $value,
-        ?bool $overwrite
-    ) use (&$result) {
-        $result['key'] = $key;
-        $result['value'] = $value;
-        $result['overwrite'] = $overwrite === false ? 'yes' : 'no';
-    }, [
-        'key' => ['type' => 'required'],
-        'value' => ['type' => 'required'],
-        'overwrite' => ['type' => 'novalue']
-    ]);
+    $collection->add(
+        'set',
+        function (
+            InputInterface $input,
+            OutputInterface $output,
+            string $key,
+            string $value,
+            ?bool $overwrite
+        ) use (&$result) {
+            $result['key'] = $key;
+            $result['value'] = $value;
+            $result['overwrite'] = $overwrite === false ? 'yes' : 'no';
+        },
+        [
+            'key' => [
+                'longname' => 'key',
+                'type' => 'required'
+            ],
+            'value' => [
+                'longname' => 'value',
+                'type' => 'required'
+            ],
+            'overwrite' => [
+                'longname' => 'overwrite',
+                'type' => 'novalue'
+            ]
+        ]
+    );
 
     $handler = new Handler($collection, $input);
     $handler->deploy();
@@ -142,17 +201,28 @@ it('calls a command', function () {
     $input = new Input(['script.php', 'set', '--key=foo', '--value=bar']);
     $result = [];
 
-    $collection->add('set', function (InputInterface $input, OutputInterface $output, string $key, mixed $value) use (&$result) {
-        $result[] = $output->prepare('Key: ' . $key);
-        $result[] = $output->prepare('Value: ' . $value);
-    }, [
-        'key' => [
-            'type' => 'required'
-        ],
-        'value' => [
-            'type' => 'required'
+    $collection->add(
+        'set',
+        function (
+            InputInterface $input,
+            OutputInterface $output,
+            string $key,
+            mixed $value
+        ) use (&$result) {
+            $result[] = $output->prepare('Key: ' . $key);
+            $result[] = $output->prepare('Value: ' . $value);
+        },
+        [
+            'key' => [
+                'longname' => 'key',
+                'type' => 'required'
+            ],
+            'value' => [
+                'longname' => 'value',
+                'type' => 'required'
+            ]
         ]
-    ]);
+    );
 
     $handler = new Handler($collection, $input);
     $handler->deploy();

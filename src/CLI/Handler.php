@@ -2,6 +2,7 @@
 
 namespace GSpataro\CLI;
 
+use GSpataro\CLI\Helper\BaseCommand;
 use GSpataro\CLI\Helper\Manpage;
 use GSpataro\CLI\Interface\InputInterface;
 use GSpataro\CLI\Interface\OutputInterface;
@@ -89,33 +90,43 @@ final class Handler
         }
 
         $command = $this->commands->get($commandName);
-        $inputArgs = $this->input->getArgs();
         $outputArgs = [];
         $i = 0;
 
-        foreach ($command['options'] as $optionName => $option) {
+        foreach ($command->getOptions() as $optionName => $option) {
+            $longname = $option['longname'] ?? null;
+            $shortname = $option['shortname'] ?? null;
+            $type = $option['type'];
+
             if (
-                is_null($this->input->getArg($optionName)) &&
-                !isset($inputArgs[$option['short']]) &&
-                $option['type'] == "required"
+                ((!is_null($longname) && is_null($this->input->getArg($longname))) ||
+                (!is_null($shortname) && is_null($this->input->getArg($shortname)))) &&
+                $type == 'required'
             ) {
                 $this->manpage->render();
                 return;
             }
 
-            $outputArgs[$optionName] = $this->input->getArg($optionName)
-                ?? $inputArgs[$option['short']]
-                ?? null;
+            if (!is_null($longname) && !is_null($this->input->getArg($longname))) {
+                $outputArgs[$optionName] = $this->input->getArg($longname);
+            } elseif (!is_null($shortname) && !is_null($this->input->getArg($shortname))) {
+                $outputArgs[$optionName] = $this->input->getArg($shortname);
+            } else {
+                $outputArgs[$optionName] = null;
+            }
+
             $i++;
         }
 
-        if (is_array($command['callback'])) {
-            $object = $command['callback'][0];
-            $object->setIO($this->input, $this->output);
+        $callback = $command->getCallback();
 
-            call_user_func_array($command['callback'], $outputArgs);
+        if (is_string($callback) || $callback instanceof BaseCommand) {
+            $object = is_string($callback) ? new $callback() : $callback;
+            $object->setIO($this->input, $this->output);
+            $object->setArgs($outputArgs);
+            $object->main();
         } else {
-            call_user_func_array($command['callback'], [
+            call_user_func_array($callback, [
                 "input" => $this->input,
                 "output" => $this->output,
             ] + $outputArgs);

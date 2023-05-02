@@ -3,7 +3,6 @@
 namespace GSpataro\CLI;
 
 use GSpataro\CLI\Exception\CommandNotFoundException;
-use GSpataro\CLI\Helper\BaseCommand;
 
 final class CommandsCollection
 {
@@ -18,19 +17,37 @@ final class CommandsCollection
     /**
      * Verify if the collection has an command
      *
-     * @param string $tag
+     * @param string $name
      * @return bool
      */
 
-    public function has(string $tag): bool
+    public function has(string $name): bool
     {
-        return isset($this->commands[$tag]);
+        return isset($this->commands[$name]);
     }
 
     /**
-     * Add an command to the collection
+     * Register a command directly
      *
-     * @param string $command
+     * @param Command $command
+     * @return void
+     */
+
+    public function register(Command $command): void
+    {
+        if ($this->has($command->getName())) {
+            throw new Exception\CommandFoundException(
+                "Command '{$command->getName()}' already exists in the collection."
+            );
+        }
+
+        $this->commands[$command->getName()] = $command;
+    }
+
+    /**
+     * Add a command to the collection
+     *
+     * @param string $name
      * @param callable $callback
      * @param array $options
      * @param string|null $description
@@ -38,44 +55,21 @@ final class CommandsCollection
      */
 
     public function add(
-        string $command,
+        string $name,
         callable $callback,
         array $options = [],
         ?string $description = null
     ): void {
-        if ($this->has($command)) {
+        if ($this->has($name)) {
             throw new Exception\CommandFoundException(
-                "Command '{$command}' already exists in the collection."
+                "Command '{$name}' already exists in the collection."
             );
         }
 
-        if (is_array($callback) && !$callback[0] instanceof BaseCommand) {
-            throw new Exception\InvalidCommandCallbackException(
-                "Invalid callback for command '{$command}'. " .
-                "The command object must extend the GSpataro\\CLI\\Helper\\BaseCommand class"
-            );
-        }
+        $command = new Command($name, $description);
+        $command->setCallback($callback)->setOptions($options);
 
-        foreach ($options as $option => &$definition) {
-            if (!is_array($definition)) {
-                throw new Exception\InvalidCommandOptionsDefinitionException(
-                    "Invalid option '{$option}' definition for command '{$command}'." .
-                    "An option must include an empty array or an array with validation informations."
-                );
-            }
-
-            $definition['type'] = in_array($definition['type'] ?? null, ['required', 'optional', 'novalue'])
-                ? $definition['type']
-                : "optional";
-            $definition['short'] = $definition['short'] ?? null;
-            $definition['description'] = $definition['description'] ?? null;
-        }
-
-        $this->commands[$command] = [
-            "options" => $options,
-            "callback" => $callback,
-            "description" => $description
-        ];
+        $this->commands[$name] = $command;
     }
 
     /**
@@ -87,33 +81,33 @@ final class CommandsCollection
 
     public function feed(array $commands): void
     {
-        foreach ($commands as $command => $definition) {
+        foreach ($commands as $name => $definition) {
             if (!isset($definition['callback'])) {
                 throw new Exception\IncompleteCommandDefinitionException(
-                    "Incomplete command '{$command}' definition. A command must include at least a valid callback."
+                    "Incomplete command '{$name}' definition. A command must include at least a valid callback."
                 );
             }
 
             $definition['description'] = $definition['description'] ?? null;
-            $this->add($command, $definition['callback'], $definition['options'], $definition['description']);
+            $this->add($name, $definition['callback'], $definition['options'], $definition['description']);
         }
     }
 
     /**
      * Get a command
      *
-     * @return array
+     * @return Command
      */
 
-    public function get(string $command): array
+    public function get(string $name): Command
     {
-        if (!$this->has($command)) {
+        if (!$this->has($name)) {
             throw new CommandNotFoundException(
-                "Command '{$command}' not found in the collection."
+                "Command '{$name}' not found in the collection."
             );
         }
 
-        return $this->commands[$command];
+        return $this->commands[$name];
     }
 
     /**
