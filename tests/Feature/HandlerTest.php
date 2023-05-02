@@ -5,15 +5,19 @@ use GSpataro\CLI\Handler;
 use GSpataro\CLI\CommandsCollection;
 use GSpataro\CLI\Interface\InputInterface;
 use GSpataro\CLI\Interface\OutputInterface;
+use Tests\Utilities\Controller;
 
-uses()->group('core');
+uses(\Tests\TestCase::class)->group('core');
+
+beforeEach(function () {
+    $this->collection = new CommandsCollection();
+});
 
 it('recognizes long options', function () {
-    $collection = new CommandsCollection();
     $input = new Input(['script.php', 'set', '--key=foo', '--value=bar']);
     $result = [];
 
-    $collection->add(
+    $this->collection->add(
         'set',
         function (InputInterface $input, OutputInterface $output, string $key, string $value) use (&$result) {
             $result['key'] = $key;
@@ -31,7 +35,7 @@ it('recognizes long options', function () {
         ]
     );
 
-    $handler = new Handler($collection, $input);
+    $handler = new Handler($this->collection, $input);
     $handler->deploy();
 
     expect($result)->toBe([
@@ -41,11 +45,10 @@ it('recognizes long options', function () {
 });
 
 it('recognizes short options', function () {
-    $collection = new CommandsCollection();
     $input = new Input(['script.php', 'set', '-k', 'foo', '-v', 'bar']);
     $result = [];
 
-    $collection->add(
+    $this->collection->add(
         'set',
         function (InputInterface $input, OutputInterface $output, string $key, string $value) use (&$result) {
             $result['key'] = $key;
@@ -63,7 +66,7 @@ it('recognizes short options', function () {
         ]
     );
 
-    $handler = new Handler($collection, $input);
+    $handler = new Handler($this->collection, $input);
     $handler->deploy();
 
     expect($result)->toBe([
@@ -73,11 +76,10 @@ it('recognizes short options', function () {
 });
 
 it('recognizes required options', function () {
-    $collection = new CommandsCollection();
     $input = new Input(['script.php', 'set', '--key=foo']);
     $result = [];
 
-    $collection->add(
+    $this->collection->add(
         'set',
         function (InputInterface $input, OutputInterface $output, string $key, string $value) use (&$result) {
             $result['key'] = $key;
@@ -95,18 +97,17 @@ it('recognizes required options', function () {
         ]
     );
 
-    $handler = new Handler($collection, $input);
+    $handler = new Handler($this->collection, $input);
     $handler->deploy();
 
     expect($result)->toBe([]);
 });
 
 it('recognizes optional options', function () {
-    $collection = new CommandsCollection();
     $input = new Input(['script.php', 'set', '--key=foo', '--value=bar', '--type=config']);
     $result = [];
 
-    $collection->add(
+    $this->collection->add(
         'set',
         function (
             InputInterface $input,
@@ -141,7 +142,7 @@ it('recognizes optional options', function () {
         ]
     );
 
-    $handler = new Handler($collection, $input);
+    $handler = new Handler($this->collection, $input);
     $handler->deploy();
 
     expect($result)->toBe([
@@ -153,11 +154,10 @@ it('recognizes optional options', function () {
 });
 
 it('recognizes novalue options', function () {
-    $collection = new CommandsCollection();
     $input = new Input(['script.php', 'set', '--key=foo', '--overwrite', '--value=bar']);
     $result = [];
 
-    $collection->add(
+    $this->collection->add(
         'set',
         function (
             InputInterface $input,
@@ -186,7 +186,7 @@ it('recognizes novalue options', function () {
         ]
     );
 
-    $handler = new Handler($collection, $input);
+    $handler = new Handler($this->collection, $input);
     $handler->deploy();
 
     expect($result)->toBe([
@@ -196,7 +196,7 @@ it('recognizes novalue options', function () {
     ]);
 });
 
-it('calls a command', function () {
+it('calls a callable command', function () {
     $collection = new CommandsCollection();
     $input = new Input(['script.php', 'set', '--key=foo', '--value=bar']);
     $result = [];
@@ -231,4 +231,64 @@ it('calls a command', function () {
         "Key: foo\e[0m" . PHP_EOL,
         "Value: bar\e[0m" . PHP_EOL
     ]);
+});
+
+it('calls an object command', function () {
+    $this->startOutputBuffer();
+    $input = new Input(['script.php', 'set', '--key=foo', '--value=bar']);
+
+    $this->collection->add(
+        'set',
+        new Controller(),
+        [
+            'key' => [
+                'longname' => 'key',
+                'type' => 'required'
+            ],
+            'value' => [
+                'longname' => 'value',
+                'type' => 'required'
+            ]
+        ]
+    );
+
+    $handler = new Handler($this->collection, $input);
+    $handler->deploy();
+
+    $result = $this->getOutput();
+
+    $expected = "Key: foo\e[0m" . PHP_EOL;
+    $expected .= "Value: bar\e[0m" . PHP_EOL;
+
+    expect($result)->toBe($expected);
+});
+
+it('calls a class command', function () {
+    $this->startOutputBuffer();
+    $input = new Input(['script.php', 'set', '--key=foo', '--value=bar']);
+
+    $this->collection->add(
+        'set',
+        Controller::class,
+        [
+            'key' => [
+                'longname' => 'key',
+                'type' => 'required'
+            ],
+            'value' => [
+                'longname' => 'value',
+                'type' => 'required'
+            ]
+        ]
+    );
+
+    $handler = new Handler($this->collection, $input);
+    $handler->deploy();
+
+    $result = $this->getOutput();
+
+    $expected = "Key: foo\e[0m" . PHP_EOL;
+    $expected .= "Value: bar\e[0m" . PHP_EOL;
+
+    expect($result)->toBe($expected);
 });
