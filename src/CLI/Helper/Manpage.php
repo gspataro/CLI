@@ -73,22 +73,13 @@ class Manpage
         foreach ($this->commands->getAll() as $commandName => $command) {
             $this->table->addRow([$commandName, $command->getDescription()], 'heading');
 
-            foreach ($command->getOptions() as $optionName => $option) {
+            foreach ($command->getOptions() as $name => $option) {
                 $separator = is_null($option['description']) ? null : " ";
                 $prefix = $option['type'] == "required" ? "-" : "--";
-                $longopt = $option['longname'] ?? null;
-                $shortopt = $option['shortname'] ?? null;
-
-                if ($longopt && !$shortopt) {
-                    $names = $prefix . $longopt;
-                } elseif (!$longopt && $shortopt) {
-                    $names = $prefix . $shortopt;
-                } else {
-                    $names = $prefix . $shortopt . ', ' . $prefix . $longopt;
-                }
+                $shortopt = $option['shortname'] ? $prefix . $option['shortname'] . ', ' : null;
 
                 $this->table->addRow([
-                    $names,
+                    $shortopt . $prefix . $name,
                     $option['description'] .
                     ($option['type'] == "required" ? "{$separator}({$this->locale['required']})" : null)
                 ]);

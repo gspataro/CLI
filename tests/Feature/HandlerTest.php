@@ -25,11 +25,9 @@ it('recognizes long options', function () {
         },
         [
             'key' => [
-                'longname' => 'key',
                 'type' => 'required'
             ],
             'value' => [
-                'longname' => 'value',
                 'type' => 'required'
             ]
         ]
@@ -87,11 +85,9 @@ it('recognizes required options', function () {
         },
         [
             'key' => [
-                'longname' => 'key',
                 'type' => 'required'
             ],
             'value' => [
-                'longname' => 'value',
                 'type' => 'required'
             ]
         ]
@@ -124,19 +120,15 @@ it('recognizes optional options', function () {
         },
         [
             'key' => [
-                'longname' => 'key',
                 'type' => 'required'
             ],
             'value' => [
-                'longname' => 'value',
                 'type' => 'required'
             ],
             'type' => [
-                'longname' => 'type',
                 'type' => 'optional'
             ],
             'description' => [
-                'longname' => 'description',
                 'type' => 'optional'
             ]
         ]
@@ -172,15 +164,12 @@ it('recognizes novalue options', function () {
         },
         [
             'key' => [
-                'longname' => 'key',
                 'type' => 'required'
             ],
             'value' => [
-                'longname' => 'value',
                 'type' => 'required'
             ],
             'overwrite' => [
-                'longname' => 'overwrite',
                 'type' => 'novalue'
             ]
         ]
@@ -214,11 +203,9 @@ it('calls a callable command', function () {
         },
         [
             'key' => [
-                'longname' => 'key',
                 'type' => 'required'
             ],
             'value' => [
-                'longname' => 'value',
                 'type' => 'required'
             ]
         ]
@@ -242,11 +229,9 @@ it('calls an object command', function () {
         new Controller(),
         [
             'key' => [
-                'longname' => 'key',
                 'type' => 'required'
             ],
             'value' => [
-                'longname' => 'value',
                 'type' => 'required'
             ]
         ]
@@ -272,11 +257,9 @@ it('calls a class command', function () {
         Controller::class,
         [
             'key' => [
-                'longname' => 'key',
                 'type' => 'required'
             ],
             'value' => [
-                'longname' => 'value',
                 'type' => 'required'
             ]
         ]

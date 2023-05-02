@@ -20,13 +20,11 @@ beforeEach(function () {
             'callback' => fn(Input $input, Output $output, string $email, string $password) => 'login',
             'options' => [
                 'email' => [
-                    'longname' => 'email',
                     'type' => 'required',
                     'shortname' => 'e',
                     'description' => 'Your email address'
                 ],
                 'password' => [
-                    'longname' => 'password',
                     'type' => 'required',
                     'shortname' => 'p',
                     'description' => 'Your password'
@@ -38,19 +36,16 @@ beforeEach(function () {
             'callback' => fn(Input $input, Output $output, string $email, string $password, ?string $name) => 'login',
             'options' => [
                 'email' => [
-                    'longname' => 'email',
                     'type' => 'required',
                     'shortname' => 'e',
                     'description' => 'Your email address'
                 ],
                 'password' => [
-                    'longname' => 'password',
                     'type' => 'required',
                     'shortname' => 'p',
                     'description' => 'Choose a password'
                 ],
                 'name' => [
-                    'longname' => 'name',
                     'type' => 'optional',
                     'description' => 'Your full name'
                 ]

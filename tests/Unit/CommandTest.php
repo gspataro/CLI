@@ -46,20 +46,6 @@ it('throws an exception if an option is not an array', function () {
     "An option must be an array containing the informations needed."
 );
 
-it('throws an exception if an option does not provide a long/shortname', function () {
-    $command = new Command('test');
-    $command->setOptions([
-        'invalid' => [
-            'type' => 'required',
-            'description' => 'lorem ipsum dolor'
-        ]
-    ]);
-})->throws(
-    InvalidCommandOptionsDefinitionException::class,
-    "Invalid option 'invalid' definition for command 'test'. " .
-    "An option must include at least a longname or a shortname."
-);
-
 it('throws an exception if an option has a too long shortname', function () {
     $command = new Command('test');
     $command->setOptions([
@@ -77,7 +63,6 @@ it('sets and retrieves the command options', function () {
     $command = new Command('test');
     $result = $command->setOptions([
         'noshort' => [
-            'longname' => 'noshort',
             'type' => 'required',
             'description' => 'no short name'
         ],
@@ -87,28 +72,23 @@ it('sets and retrieves the command options', function () {
             'description' => 'no long name'
         ],
         'bothshortandlong' => [
-            'longname' => 'bothshort',
             'shortname' => 'a',
             'type' => 'toggle',
             'description' => 'both short and long names'
         ],
         'notype' => [
-            'longname' => 'notype',
             'description' => 'lorem ipsum'
         ],
         'invalidtype' => [
-            'longname' => 'invalidtype',
             'type' => 'boolean'
         ],
         'nodescription' => [
-            'longname' => 'nodescription',
             'type' => 'required'
         ]
     ])->getOptions();
 
     expect($result)->toBe([
         'noshort' => [
-            'longname' => 'noshort',
             'type' => 'required',
             'description' => 'no short name',
             'shortname' => null
@@ -116,29 +96,24 @@ it('sets and retrieves the command options', function () {
         'nolong' => [
             'shortname' => 'n',
             'type' => 'optional',
-            'description' => 'no long name',
-            'longname' => null
+            'description' => 'no long name'
         ],
         'bothshortandlong' => [
-            'longname' => 'bothshort',
             'shortname' => 'a',
             'type' => 'toggle',
             'description' => 'both short and long names'
         ],
         'notype' => [
-            'longname' => 'notype',
             'description' => 'lorem ipsum',
             'shortname' => null,
             'type' => 'optional'
         ],
         'invalidtype' => [
-            'longname' => 'invalidtype',
             'type' => 'optional',
             'shortname' => null,
             'description' => null
         ],
         'nodescription' => [
-            'longname' => 'nodescription',
             'type' => 'required',
             'shortname' => null,
             'description' => null

@@ -94,21 +94,20 @@ final class Handler
         $i = 0;
 
         foreach ($command->getOptions() as $optionName => $option) {
-            $longname = $option['longname'] ?? null;
             $shortname = $option['shortname'] ?? null;
             $type = $option['type'];
 
             if (
-                ((!is_null($longname) && is_null($this->input->getArg($longname))) ||
-                (!is_null($shortname) && is_null($this->input->getArg($shortname)))) &&
-                $type == 'required'
+                is_null($this->input->getArg($optionName))
+                && (is_null($shortname) || is_null($this->input->getArg($shortname)))
+                && $type == 'required'
             ) {
                 $this->manpage->render();
                 return;
             }
 
-            if (!is_null($longname) && !is_null($this->input->getArg($longname))) {
-                $outputArgs[$optionName] = $this->input->getArg($longname);
+            if (!is_null($this->input->getArg($optionName))) {
+                $outputArgs[$optionName] = $this->input->getArg($optionName);
             } elseif (!is_null($shortname) && !is_null($this->input->getArg($shortname))) {
                 $outputArgs[$optionName] = $this->input->getArg($shortname);
             } else {

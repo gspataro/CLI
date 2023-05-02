@@ -74,15 +74,7 @@ final class Command
                 );
             }
 
-            $option['longname'] ??= null;
             $option['shortname'] ??= null;
-
-            if (is_null($option['longname']) && is_null($option['shortname'])) {
-                throw new Exception\InvalidCommandOptionsDefinitionException(
-                    "Invalid option '{$name}' definition for command '{$this->getName()}'. " .
-                    "An option must include at least a longname or a shortname."
-                );
-            }
 
             if (!is_null($option['shortname']) && strlen($option['shortname']) !== 1) {
                 throw new Exception\InvalidCommandOptionsDefinitionException(
