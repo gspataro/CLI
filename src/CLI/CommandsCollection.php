@@ -3,6 +3,7 @@
 namespace GSpataro\CLI;
 
 use GSpataro\CLI\Exception\CommandNotFoundException;
+use GSpataro\CLI\Helper\BaseCommand;
 
 final class CommandsCollection
 {
@@ -48,7 +49,7 @@ final class CommandsCollection
      * Add a command to the collection
      *
      * @param string $name
-     * @param callable $callback
+     * @param BaseCommand|string|callable $callback
      * @param array $options
      * @param string|null $description
      * @return void
@@ -56,7 +57,7 @@ final class CommandsCollection
 
     public function add(
         string $name,
-        callable $callback,
+        BaseCommand|string|callable $callback,
         array $options = [],
         ?string $description = null
     ): void {
