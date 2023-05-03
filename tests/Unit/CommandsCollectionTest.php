@@ -5,7 +5,7 @@ use GSpataro\CLI\CommandsCollection;
 use GSpataro\CLI\Exception\CommandFoundException;
 use GSpataro\CLI\Exception\CommandNotFoundException;
 
-uses(\Tests\TestCase::class)->group('core');
+uses(\Tests\TestCase::class)->group('core', 'command');
 
 beforeEach(function () {
     $this->commandsCollection = new CommandsCollection();
@@ -20,7 +20,8 @@ it('verifies that a command exists', function () {
 });
 
 it('registers a command', function () {
-    $command = new Command('test');
+    $command = new Command();
+    $command->setName('test');
 
     $this->commandsCollection->register($command);
 
@@ -29,7 +30,7 @@ it('registers a command', function () {
     expect($commands['test'])->toBe($command);
 });
 
-it('adds a command', function () {
+it('creates a command', function () {
     $callback = fn() => 'bar';
     $options = [
         [
@@ -37,26 +38,27 @@ it('adds a command', function () {
         ]
     ];
 
-    $this->commandsCollection->add('foo', $callback, $options);
+    $this->commandsCollection->create('foo')->setCallback($callback)->setOptions($options);
 
     $commands = $this->readPrivateProperty($this->commandsCollection, 'commands');
-    $expected = new Command('foo');
-    $expected->setCallback($callback);
-    $expected->setOptions($options);
+    $expected = new Command();
+    $expected->setName('foo')->setCallback($callback)->setOptions($options);
 
     expect($commands['foo'])->toEqual($expected);
 });
 
 it('throws an exception if a command already exists', function () {
-    $this->commandsCollection->add('test', fn() => 'first', []);
-    $this->commandsCollection->add('test', fn() => 'second', []);
+    $this->commandsCollection->create('test');
+    $this->commandsCollection->create('test');
 })->throws(
     CommandFoundException::class,
     "Command 'test' already exists in the collection."
 );
 
 it('throws an exception if a command was already registered', function () {
-    $command = new Command('test');
+    $command = new Command();
+    $command->setName('test');
+
     $this->commandsCollection->register($command);
     $this->commandsCollection->register($command);
 })->throws(
@@ -65,8 +67,11 @@ it('throws an exception if a command was already registered', function () {
 );
 
 it('returns a command', function () {
-    $firstCommand = new Command('first');
-    $secondCommand = new Command('second');
+    $firstCommand = new Command();
+    $secondCommand = new Command();
+
+    $firstCommand->setName('first');
+    $secondCommand->setName('second');
 
     $this->setPrivateProperty($this->commandsCollection, 'commands', [
         'first' => $firstCommand,

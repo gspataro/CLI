@@ -17,21 +17,15 @@ it('recognizes long options', function () {
     $input = new Input(['script.php', 'set', '--key=foo', '--value=bar']);
     $result = [];
 
-    $this->collection->add(
-        'set',
-        function (InputInterface $input, OutputInterface $output, string $key, string $value) use (&$result) {
+    $this->collection->create('set')
+        ->setCallback(function ($input, $output, $key, $value) use (&$result) {
             $result['key'] = $key;
             $result['value'] = $value;
-        },
-        [
-            'key' => [
-                'type' => 'required'
-            ],
-            'value' => [
-                'type' => 'required'
-            ]
-        ]
-    );
+        })
+        ->setOptions([
+            'key' => ['type' => 'required'],
+            'value' => ['type' => 'required']
+        ]);
 
     $handler = new Handler($this->collection, $input);
     $handler->deploy();
@@ -46,13 +40,12 @@ it('recognizes short options', function () {
     $input = new Input(['script.php', 'set', '-k', 'foo', '-v', 'bar']);
     $result = [];
 
-    $this->collection->add(
-        'set',
-        function (InputInterface $input, OutputInterface $output, string $key, string $value) use (&$result) {
+    $this->collection->create('set')
+        ->setCallback(function ($input, $output, $key, $value) use (&$result) {
             $result['key'] = $key;
             $result['value'] = $value;
-        },
-        [
+        })
+        ->setOptions([
             'key' => [
                 'shortname' => 'k',
                 'type' => 'required'
@@ -61,8 +54,7 @@ it('recognizes short options', function () {
                 'shortname' => 'v',
                 'type' => 'required'
             ]
-        ]
-    );
+        ]);
 
     $handler = new Handler($this->collection, $input);
     $handler->deploy();
@@ -77,21 +69,19 @@ it('recognizes required options', function () {
     $input = new Input(['script.php', 'set', '--key=foo']);
     $result = [];
 
-    $this->collection->add(
-        'set',
-        function (InputInterface $input, OutputInterface $output, string $key, string $value) use (&$result) {
+    $this->collection->create('set')
+        ->setCallback(function ($input, $output, $key, $value) use (&$result) {
             $result['key'] = $key;
             $result['value'] = $value;
-        },
-        [
+        })
+        ->setOptions([
             'key' => [
                 'type' => 'required'
             ],
             'value' => [
                 'type' => 'required'
             ]
-        ]
-    );
+        ]);
 
     $handler = new Handler($this->collection, $input);
     $handler->deploy();
@@ -103,22 +93,14 @@ it('recognizes optional options', function () {
     $input = new Input(['script.php', 'set', '--key=foo', '--value=bar', '--type=config']);
     $result = [];
 
-    $this->collection->add(
-        'set',
-        function (
-            InputInterface $input,
-            OutputInterface $output,
-            string $key,
-            string $value,
-            ?string $type,
-            ?string $description
-        ) use (&$result) {
+    $this->collection->create('set')
+        ->setCallback(function ($input, $output, $key, $value, $type, $description) use (&$result) {
             $result['key'] = $key;
             $result['value'] = $value;
             $result['type'] = $type;
             $result['description'] = $description ?? 'not set';
-        },
-        [
+        })
+        ->setOptions([
             'key' => [
                 'type' => 'required'
             ],
@@ -131,8 +113,7 @@ it('recognizes optional options', function () {
             'description' => [
                 'type' => 'optional'
             ]
-        ]
-    );
+        ]);
 
     $handler = new Handler($this->collection, $input);
     $handler->deploy();
@@ -149,20 +130,13 @@ it('recognizes novalue options', function () {
     $input = new Input(['script.php', 'set', '--key=foo', '--overwrite', '--value=bar']);
     $result = [];
 
-    $this->collection->add(
-        'set',
-        function (
-            InputInterface $input,
-            OutputInterface $output,
-            string $key,
-            string $value,
-            ?bool $overwrite
-        ) use (&$result) {
+    $this->collection->create('set')
+        ->setCallback(function ($input, $output, $key, $value, $overwrite) use (&$result) {
             $result['key'] = $key;
             $result['value'] = $value;
             $result['overwrite'] = $overwrite === false ? 'yes' : 'no';
-        },
-        [
+        })
+        ->setOptions([
             'key' => [
                 'type' => 'required'
             ],
@@ -172,8 +146,7 @@ it('recognizes novalue options', function () {
             'overwrite' => [
                 'type' => 'novalue'
             ]
-        ]
-    );
+            ]);
 
     $handler = new Handler($this->collection, $input);
     $handler->deploy();
@@ -186,32 +159,24 @@ it('recognizes novalue options', function () {
 });
 
 it('calls a callable command', function () {
-    $collection = new CommandsCollection();
     $input = new Input(['script.php', 'set', '--key=foo', '--value=bar']);
     $result = [];
 
-    $collection->add(
-        'set',
-        function (
-            InputInterface $input,
-            OutputInterface $output,
-            string $key,
-            mixed $value
-        ) use (&$result) {
+    $this->collection->create('set')
+        ->setCallback(function ($input, $output, $key, $value) use (&$result) {
             $result[] = $output->prepare('Key: ' . $key);
             $result[] = $output->prepare('Value: ' . $value);
-        },
-        [
+        })
+        ->setOptions([
             'key' => [
                 'type' => 'required'
             ],
             'value' => [
                 'type' => 'required'
             ]
-        ]
-    );
+        ]);
 
-    $handler = new Handler($collection, $input);
+    $handler = new Handler($this->collection, $input);
     $handler->deploy();
 
     expect($result)->toEqual([
@@ -222,54 +187,16 @@ it('calls a callable command', function () {
 
 it('calls an object command', function () {
     $this->startOutputBuffer();
-    $input = new Input(['script.php', 'set', '--key=foo', '--value=bar']);
 
-    $this->collection->add(
-        'set',
-        new Controller(),
-        [
-            'key' => [
-                'type' => 'required'
-            ],
-            'value' => [
-                'type' => 'required'
-            ]
-        ]
-    );
+    $input = new Input(['script.php', 'set', '--key=foo', '--value=bar']);
+    $command = new Controller();
+
+    $this->collection->register($command);
 
     $handler = new Handler($this->collection, $input);
     $handler->deploy();
 
     $result = $this->getOutput();
-
-    $expected = "Key: foo\e[0m" . PHP_EOL;
-    $expected .= "Value: bar\e[0m" . PHP_EOL;
-
-    expect($result)->toBe($expected);
-});
-
-it('calls a class command', function () {
-    $this->startOutputBuffer();
-    $input = new Input(['script.php', 'set', '--key=foo', '--value=bar']);
-
-    $this->collection->add(
-        'set',
-        Controller::class,
-        [
-            'key' => [
-                'type' => 'required'
-            ],
-            'value' => [
-                'type' => 'required'
-            ]
-        ]
-    );
-
-    $handler = new Handler($this->collection, $input);
-    $handler->deploy();
-
-    $result = $this->getOutput();
-
     $expected = "Key: foo\e[0m" . PHP_EOL;
     $expected .= "Value: bar\e[0m" . PHP_EOL;
 

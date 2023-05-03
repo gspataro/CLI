@@ -117,18 +117,6 @@ final class Handler
             $i++;
         }
 
-        $callback = $command->getCallback();
-
-        if (is_string($callback) || $callback instanceof BaseCommand) {
-            $object = is_string($callback) ? new $callback() : $callback;
-            $object->setIO($this->input, $this->output);
-            $object->setArgs($outputArgs);
-            $object->main();
-        } else {
-            call_user_func_array($callback, [
-                'input' => $this->input,
-                'output' => $this->output,
-            ] + $outputArgs);
-        }
+        $command->run($this->input, $this->output, $outputArgs);
     }
 }

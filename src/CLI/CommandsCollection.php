@@ -49,49 +49,22 @@ final class CommandsCollection
      * Add a command to the collection
      *
      * @param string $name
-     * @param BaseCommand|string|callable $callback
-     * @param array $options
-     * @param string|null $description
-     * @return void
+     * @return Command
      */
 
-    public function add(
-        string $name,
-        BaseCommand|string|callable $callback,
-        array $options = [],
-        ?string $description = null
-    ): void {
+    public function create(string $name): Command
+    {
         if ($this->has($name)) {
             throw new Exception\CommandFoundException(
                 "Command '{$name}' already exists in the collection."
             );
         }
 
-        $command = new Command($name, $description);
-        $command->setCallback($callback)->setOptions($options);
+        $command = new Command();
+        $command->setName($name);
 
         $this->commands[$name] = $command;
-    }
-
-    /**
-     * Add multiple commands at a time
-     *
-     * @param array $commands
-     * @return void
-     */
-
-    public function feed(array $commands): void
-    {
-        foreach ($commands as $name => $definition) {
-            if (!isset($definition['callback'])) {
-                throw new Exception\IncompleteCommandDefinitionException(
-                    "Incomplete command '{$name}' definition. A command must include at least a valid callback."
-                );
-            }
-
-            $definition['description'] = $definition['description'] ?? null;
-            $this->add($name, $definition['callback'], $definition['options'], $definition['description']);
-        }
+        return $this->commands[$name];
     }
 
     /**

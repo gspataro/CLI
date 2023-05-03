@@ -4,16 +4,37 @@ namespace GSpataro\CLI;
 
 use Closure;
 use GSpataro\CLI\Helper\BaseCommand;
+use GSpataro\CLI\Interface\InputInterface;
+use GSpataro\CLI\Interface\OutputInterface;
 
-final class Command
+class Command
 {
+    protected readonly InputInterface $input;
+    protected readonly OutputInterface $output;
+
     /**
      * Store callback
      *
-     * @var Closure|BaseCommand|string
+     * @var Closure
      */
 
-    private readonly Closure|BaseCommand|string $callback;
+    protected readonly Closure $callback;
+
+    /**
+     * Store name
+     *
+     * @var string
+     */
+
+    protected string $name;
+
+    /**
+     * Store description
+     *
+     * @var string|null
+     */
+
+    protected ?string $description = null;
 
     /**
      * Store options
@@ -21,39 +42,52 @@ final class Command
      * @var array
      */
 
-    private readonly array $options;
+    protected readonly array $options;
 
     /**
-     * Initialize Command object
+     * Store arguments
      *
-     * @param string $name
+     * @var array
      */
 
-    public function __construct(
-        private readonly string $name,
-        private readonly ?string $description = null
-    ) {
+    private array $args = [];
+
+    /**
+     * Set command name
+     *
+     * @param string $name
+     * @return static
+     */
+
+    final public function setName(string $name): static
+    {
+        $this->name = $name;
+        return $this;
+    }
+
+    /**
+     * Set command description
+     *
+     * @param string $description
+     * @return static
+     */
+
+    final public function setDescription(string $description): static
+    {
+        $this->description = $description;
+        return $this;
     }
 
     /**
      * Set command callback
      *
-     * @param BaseCommand|string|callable $callback
+     * @param callable $callback
      * @return static
      */
 
-    public function setCallback(BaseCommand|string|callable $callback): static
+    final public function setCallback(callable $callback): static
     {
-        if (is_string($callback) && !is_subclass_of($callback, BaseCommand::class)) {
-            throw new Exception\InvalidCommandCallbackException(
-                "Invalid callback for command '{$this->getName()}'. " .
-                "A command class must extend the GSpataro\\CLI\\Helper\\BaseCommand class."
-            );
-        }
-
-        $this->callback = is_string($callback) || $callback instanceof BaseCommand
-            ? $callback
-            : Closure::fromCallable($callback);
+        $this->callback = Closure::fromCallable($callback);
         return $this;
     }
 
@@ -64,7 +98,7 @@ final class Command
      * @return static
      */
 
-    public function setOptions(array $options): static
+    final public function setOptions(array $options): static
     {
         foreach ($options as $name => &$option) {
             if (!is_array($option)) {
@@ -94,12 +128,25 @@ final class Command
     }
 
     /**
+     * Set arguments
+     *
+     * @param array $args
+     * @return static
+     */
+
+    final public function setArgs(array $args): static
+    {
+        $this->args = $args;
+        return $this;
+    }
+
+    /**
      * Get command name
      *
      * @return string
      */
 
-    public function getName(): string
+    final public function getName(): string
     {
         return $this->name;
     }
@@ -110,20 +157,9 @@ final class Command
      * @return string|null
      */
 
-    public function getDescription(): ?string
+    final public function getDescription(): ?string
     {
         return $this->description;
-    }
-
-    /**
-     * Get command callback
-     *
-     * @return BaseCommand|string|callable
-     */
-
-    public function getCallback(): BaseCommand|string|callable
-    {
-        return $this->callback;
     }
 
     /**
@@ -132,8 +168,74 @@ final class Command
      * @return array
      */
 
-    public function getOptions(): array
+    final public function getOptions(): array
     {
+        if (empty($this->options)) {
+            $this->setOptions($this->options());
+        }
+
         return $this->options;
+    }
+
+    /**
+     * Get an argument
+     *
+     * @param string $name
+     * @return mixed
+     */
+
+    final protected function argument(string $name): mixed
+    {
+        return $this->args[$name] ?? null;
+    }
+
+    /**
+     * Register command options
+     * Override this method to register command options
+     *
+     * @return array
+     */
+
+    public function options(): array
+    {
+        return [];
+    }
+
+    /**
+     * Default command main method
+     * Override this method to create command main logic
+     *
+     * @return void
+     */
+
+    public function main(): void
+    {
+        $this->output->print('{bg_green}{fg_white}{bold}Congratulations, you registered your first command!');
+        $this->output->print('{bold}Now override the main() method to add functionality to this command.');
+    }
+
+    /**
+     * Run the command
+     *
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @param array $args
+     * @return void
+     */
+
+    final public function run(InputInterface $input, OutputInterface $output, array $args = []): void
+    {
+        if (isset($this->callback)) {
+            call_user_func_array($this->callback, [
+                'input' => $input,
+                'output' => $output
+            ] + $args);
+            return;
+        }
+
+        $this->input = $input;
+        $this->output = $output;
+        $this->setArgs($args);
+        $this->main();
     }
 }

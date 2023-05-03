@@ -1,43 +1,38 @@
 <?php
 
+use GSpataro\CLI\Input;
+use GSpataro\CLI\Output;
 use GSpataro\CLI\Command;
-use GSpataro\CLI\Exception\InvalidCommandCallbackException;
 use GSpataro\CLI\Exception\InvalidCommandOptionsDefinitionException;
+use Tests\Utilities\Controller;
 
-uses()->group('core');
+uses(\Tests\TestCase::class)->group('core', 'command');
 
 it('sets and retrieves the command name', function () {
-    $command = new Command('test');
-    $result = $command->getName();
+    $command = new Command();
+    $result = $command->setName('test')->getName();
 
     expect($result)->toBe('test');
 });
 
 it('sets and retrieves the command description', function () {
-    $command = new Command('test', 'lorem ipsum dolor');
-    $result = $command->getDescription();
+    $command = new Command();
+    $result = $command->setDescription('lorem ipsum dolor')->getDescription();
 
     expect($result)->toBe('lorem ipsum dolor');
 });
 
-it('sets and retrieves the command callback', function () {
-    $command = new Command('test');
-    $result = $command->setCallback(fn() => 'lorem ipsum')->getCallback();
+it('sets the command callback', function () {
+    $command = new Command();
+    $command->setCallback(fn() => 'lorem ipsum');
+    $result = $this->readPrivateProperty($command, 'callback');
 
     expect($result)->toBeCallable();
 });
 
-it('throws an exception with an invalid command callback class (not extending base command)', function () {
-    $command = new Command('test');
-    $command->setCallback(\Tests\Utilities\InvalidController::class);
-})->throws(
-    InvalidCommandCallbackException::class,
-    "Invalid callback for command 'test'. A command class must extend the GSpataro\\CLI\\Helper\\BaseCommand class."
-);
-
 it('throws an exception if an option is not an array', function () {
-    $command = new Command('test');
-    $command->setOptions([
+    $command = new Command();
+    $command->setName('test')->setOptions([
         'option' => 'invalid'
     ]);
 })->throws(
@@ -47,8 +42,8 @@ it('throws an exception if an option is not an array', function () {
 );
 
 it('throws an exception if an option has a too long shortname', function () {
-    $command = new Command('test');
-    $command->setOptions([
+    $command = new Command();
+    $command->setName('test')->setOptions([
         'invalid' => [
             'shortname' => 'toolong'
         ]
@@ -60,8 +55,8 @@ it('throws an exception if an option has a too long shortname', function () {
 );
 
 it('sets and retrieves the command options', function () {
-    $command = new Command('test');
-    $result = $command->setOptions([
+    $command = new Command();
+    $result = $command->setName('test')->setOptions([
         'noshort' => [
             'type' => 'required',
             'description' => 'no short name'
@@ -119,4 +114,34 @@ it('sets and retrieves the command options', function () {
             'description' => null
         ]
     ]);
+});
+
+it('runs a command callback', function () {
+    $result = null;
+    $command = new Command();
+    $command->setCallback(function ($input, $output, $key, $value) use (&$result) {
+        $result = [
+            'key' => $key,
+            'value' => $value
+        ];
+    });
+
+    $command->run(new Input(), new Output(), ['key' => 'foo', 'value' => 'bar']);
+    expect($result)->toBe([
+        'key' => 'foo',
+        'value' => 'bar'
+    ]);
+});
+
+it('runs a command class', function () {
+    $this->startOutputBuffer();
+
+    $command = new Controller();
+    $command->run(new Input(), new Output(), ['key' => 'foo', 'value' => 'bar']);
+
+    $result = $this->getOutput();
+    $expected = "Key: foo\e[0m" . PHP_EOL;
+    $expected .= "Value: bar\e[0m" . PHP_EOL;
+
+    expect($result)->toBe($expected);
 });
