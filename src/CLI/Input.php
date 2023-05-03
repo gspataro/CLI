@@ -51,7 +51,7 @@ final class Input implements InputInterface
     ) {
         $this->argv = $this->argv ?? $_SERVER['argv'];
         $this->scriptName = $this->argv[0];
-        $this->commandName = $this->argv[1] ?? "help";
+        $this->commandName = $this->argv[1] ?? 'help';
         $this->rawArgs = array_slice($this->argv, 2);
 
         if (!is_resource($standardInput)) {
@@ -112,7 +112,7 @@ final class Input implements InputInterface
                 continue;
             }
 
-            if (strlen($arg) > 2 && substr($arg, 0, 2) != "--") {
+            if (strlen($arg) > 2 && substr($arg, 0, 2) != '--') {
                 continue;
             }
 

@@ -84,7 +84,7 @@ final class Handler
 
         $commandName = $this->input->getCommandName();
 
-        if ($commandName == "help" || !$this->commands->has($commandName)) {
+        if ($commandName == 'help' || !$this->commands->has($commandName)) {
             $this->manpage->render();
             return;
         }
@@ -126,8 +126,8 @@ final class Handler
             $object->main();
         } else {
             call_user_func_array($callback, [
-                "input" => $this->input,
-                "output" => $this->output,
+                'input' => $this->input,
+                'output' => $this->output,
             ] + $outputArgs);
         }
     }

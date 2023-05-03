@@ -85,7 +85,7 @@ final class Command
 
             $option['type'] = in_array($option['type'] ?? null, ['required', 'optional', 'toggle'])
                 ? $option['type']
-                : "optional";
+                : 'optional';
             $option['description'] ??= null;
         }
 
