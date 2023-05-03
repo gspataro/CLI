@@ -15,44 +15,41 @@ beforeEach(function () {
     $this->output = new Output();
     $this->commands = new CommandsCollection();
 
-    $this->commands->feed([
-        'login' => [
-            'callback' => fn(Input $input, Output $output, string $email, string $password) => 'login',
-            'options' => [
-                'email' => [
-                    'type' => 'required',
-                    'shortname' => 'e',
-                    'description' => 'Your email address'
-                ],
-                'password' => [
-                    'type' => 'required',
-                    'shortname' => 'p',
-                    'description' => 'Your password'
-                ]
+    $this->commands->create('login')
+        ->setDescription('Sign in')
+        ->setCallback(fn($input, $output, $email, $password) => 'login')
+        ->setOptions([
+            'email' => [
+                'type' => 'required',
+                'shortname' => 'e',
+                'description' => 'Your email address'
             ],
-            'description' => 'Sign in'
-        ],
-        'register' => [
-            'callback' => fn(Input $input, Output $output, string $email, string $password, ?string $name) => 'login',
-            'options' => [
-                'email' => [
-                    'type' => 'required',
-                    'shortname' => 'e',
-                    'description' => 'Your email address'
-                ],
-                'password' => [
-                    'type' => 'required',
-                    'shortname' => 'p',
-                    'description' => 'Choose a password'
-                ],
-                'name' => [
-                    'type' => 'optional',
-                    'description' => 'Your full name'
-                ]
+            'password' => [
+                'type' => 'required',
+                'shortname' => 'p',
+                'description' => 'Your password'
+            ]
+        ]);
+
+    $this->commands->create('register')
+        ->setDescription('Sign up')
+        ->setCallback(fn($input, $output, $email, $password, $name) => 'login')
+        ->setOptions([
+            'email' => [
+                'type' => 'required',
+                'shortname' => 'e',
+                'description' => 'Your email address'
             ],
-            'description' => 'Sign up'
-        ]
-    ]);
+            'password' => [
+                'type' => 'required',
+                'shortname' => 'p',
+                'description' => 'Choose a password'
+            ],
+            'name' => [
+                'type' => 'optional',
+                'description' => 'Your full name'
+            ]
+        ]);
 
     $this->manpage = new Manpage($this->commands, $this->input, $this->output);
 });
