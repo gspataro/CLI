@@ -3,6 +3,9 @@
 use GSpataro\CLI\Helper\Table;
 use GSpataro\CLI\Output;
 
+use function GSpataro\CLI\Functions\col;
+use function GSpataro\CLI\Functions\row;
+
 uses()->group('helpers');
 
 beforeEach(function () {

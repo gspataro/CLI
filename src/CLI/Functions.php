@@ -1,5 +1,7 @@
 <?php
 
+namespace GSpataro\CLI\Functions;
+
 if (!function_exists('row')) {
     /**
      * Returns a table row
