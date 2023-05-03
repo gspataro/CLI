@@ -3,7 +3,6 @@
 namespace GSpataro\CLI;
 
 use Closure;
-use GSpataro\CLI\Helper\BaseCommand;
 use GSpataro\CLI\Interface\InputInterface;
 use GSpataro\CLI\Interface\OutputInterface;
 

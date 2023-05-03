@@ -2,7 +2,6 @@
 
 namespace GSpataro\CLI;
 
-use GSpataro\CLI\Helper\BaseCommand;
 use GSpataro\CLI\Helper\Manpage;
 use GSpataro\CLI\Interface\InputInterface;
 use GSpataro\CLI\Interface\OutputInterface;

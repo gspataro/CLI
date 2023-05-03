@@ -2,9 +2,6 @@
 
 namespace GSpataro\CLI;
 
-use GSpataro\CLI\Exception\CommandNotFoundException;
-use GSpataro\CLI\Helper\BaseCommand;
-
 final class CommandsCollection
 {
     /**
@@ -76,7 +73,7 @@ final class CommandsCollection
     public function get(string $name): Command
     {
         if (!$this->has($name)) {
-            throw new CommandNotFoundException(
+            throw new Exception\CommandNotFoundException(
                 "Command '{$name}' not found in the collection."
             );
         }
