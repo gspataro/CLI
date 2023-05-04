@@ -18,15 +18,15 @@
     "autoload": {
         "psr-4": {
             "GSpataro\\CLI\\": "src/CLI/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Tests\\": "tests/"
         },
         "files": [
             "src/CLI/Functions.php"
         ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
     },
     "scripts": {
         "test": "pest",
