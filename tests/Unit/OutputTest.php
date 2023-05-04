@@ -2,19 +2,23 @@
 
 use GSpataro\CLI\Output;
 
-uses()->group('io');
+uses(\Tests\TestCase::class)->group('io');
 
 beforeEach(function () {
     $this->output = new Output();
-});
+})->startOutputBuffer();
+
+afterEach()->endOutputBuffer();
 
 it('returns a string with a new line', function () {
-    $result = $this->output->prepare(
+    $this->output->print(
         text: 'lorem ipsum',
         finalNewLine: true,
         autoclear: false,
         raw: false
     );
+
+    $result = $this->getOutput();
 
     expect($result)
         ->toBeString()
@@ -22,12 +26,14 @@ it('returns a string with a new line', function () {
 });
 
 it('returns a string without a new line', function () {
-    $result = $this->output->prepare(
+    $this->output->print(
         text: 'lorem ipsum',
         finalNewLine: false,
         autoclear: false,
         raw: false
     );
+
+    $result = $this->getOutput();
 
     expect($result)
         ->toBeString()
@@ -36,12 +42,14 @@ it('returns a string without a new line', function () {
 
 it('returns a string without formatting', function () {
     $text = '{bold}lorem ipsum';
-    $result = $this->output->prepare(
+    $this->output->print(
         text: $text,
         finalNewLine: true,
         autoclear: true,
         raw: true
     );
+
+    $result = $this->getOutput();
 
     expect($result)
         ->toBeString()
@@ -49,12 +57,14 @@ it('returns a string without formatting', function () {
 });
 
 it('returns a string with autoclear', function () {
-    $result = $this->output->prepare(
+    $this->output->print(
         text: 'lorem ipsum',
         finalNewLine: false,
         autoclear: true,
         raw: false
     );
+
+    $result = $this->getOutput();
 
     expect($result)
         ->toBeString()
@@ -62,12 +72,14 @@ it('returns a string with autoclear', function () {
 });
 
 it('returns a string without autoclear', function () {
-    $result = $this->output->prepare(
+    $this->output->print(
         text: 'lorem ipsum',
         finalNewLine: false,
         autoclear: false,
         raw: false
     );
+
+    $result = $this->getOutput();
 
     expect($result)
         ->toBeString()
@@ -75,12 +87,14 @@ it('returns a string without autoclear', function () {
 });
 
 it('returns a formatted string', function () {
-    $result = $this->output->prepare(
+    $this->output->print(
         text: "{bold}lorem ipsum",
         finalNewLine: false,
         autoclear: true,
         raw: false
     );
+
+    $result = $this->getOutput();
 
     expect($result)
         ->toBeString()

@@ -57,7 +57,7 @@ final class Output implements OutputInterface
     {
         return str_replace(
             array_keys($this->formatPlaceholders),
-            "",
+            '',
             $text
         );
     }

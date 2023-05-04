@@ -9,6 +9,14 @@ use GSpataro\CLI\Interface\OutputInterface;
 final class Handler
 {
     /**
+     * Store header
+     *
+     * @var string
+     */
+
+    private string $header;
+
+    /**
      * Store manpage
      *
      * @var Manpage
@@ -49,53 +57,16 @@ final class Handler
     }
 
     /**
-     * Process arguments and return key=value structure
+     * Set script header
+     * The header will be printed every time the script is executed
      *
-     * @param array $args
-     * @return array
+     * @param string $text
+     * @return void
      */
 
-    public function translateArguments(array $args): array
+    public function setHeader(string $text): void
     {
-        $output = [];
-
-        foreach ($args as $i => $arg) {
-            if (!str_starts_with($arg, '-')) {
-                continue;
-            }
-
-            if (strlen($arg) > 2 && substr($arg, 0, 2) != "--") {
-                continue;
-            }
-
-            // Offset values determins wheter an option is a short option or a long one
-            // Offset 1: short option
-            // Offset 2: long option
-            $keyOffset = strlen($arg) == 2 ? 1 : 2;
-
-            if (!str_contains($arg, '=')) {
-                $key = substr($arg, $keyOffset);
-                $value = isset($args[$i + 1]) && !str_starts_with($args[$i + 1], '-') && $keyOffset == 1
-                    ? $args[$i + 1]
-                    : false;
-            } elseif (str_contains($arg, '=') && $keyOffset == 2) {
-                [$key, $value] = explode('=', $arg);
-
-                $key = substr($key, $keyOffset);
-            } else {
-                continue;
-            }
-
-            if (isset($output[$key])) {
-                $values = is_array($output[$key]) ? $output[$key] : [$output[$key]];
-                $values[] = $value;
-                $output[$key] = $values;
-            } else {
-                $output[$key] = $value;
-            }
-        }
-
-        return $output;
+        $this->header = $text;
     }
 
     /**
@@ -106,42 +77,45 @@ final class Handler
 
     public function deploy(): void
     {
-        if ($this->input->getCommandName() == "help" || !$this->commands->has($this->input->getCommandName())) {
+        if (isset($this->header)) {
+            $this->output->print($this->header);
+        }
+
+        $commandName = $this->input->getCommandName();
+
+        if ($commandName == 'help' || !$this->commands->has($commandName)) {
             $this->manpage->render();
             return;
         }
 
-        $commandName = $this->input->getCommandName();
         $command = $this->commands->get($commandName);
-
-        $inputArgs = $this->translateArguments($this->input->getArgs());
         $outputArgs = [];
         $i = 0;
 
-        foreach ($command['options'] as $optionName => $option) {
+        foreach ($command->getOptions() as $optionName => $option) {
+            $shortname = $option['shortname'] ?? null;
+            $type = $option['type'];
+
             if (
-                !isset($inputArgs[$optionName]) &&
-                !isset($inputArgs[$option['short']]) &&
-                $option['type'] == "required"
+                is_null($this->input->getArg($optionName))
+                && (is_null($shortname) || is_null($this->input->getArg($shortname)))
+                && $type == 'required'
             ) {
                 $this->manpage->render();
                 return;
             }
 
-            $outputArgs[$optionName] = $inputArgs[$optionName] ?? $inputArgs[$option['short']] ?? null;
+            if (!is_null($this->input->getArg($optionName))) {
+                $outputArgs[$optionName] = $this->input->getArg($optionName);
+            } elseif (!is_null($shortname) && !is_null($this->input->getArg($shortname))) {
+                $outputArgs[$optionName] = $this->input->getArg($shortname);
+            } else {
+                $outputArgs[$optionName] = null;
+            }
+
             $i++;
         }
 
-        if (is_array($command['callback'])) {
-            $object = $command['callback'][0];
-            $object->setIO($this->input, $this->output);
-
-            call_user_func_array($command['callback'], $outputArgs);
-        } else {
-            call_user_func_array($command['callback'], [
-                "input" => $this->input,
-                "output" => $this->output,
-            ] + $outputArgs);
-        }
+        $command->run($this->input, $this->output, $outputArgs);
     }
 }

@@ -23,10 +23,17 @@
     "autoload-dev": {
         "psr-4": {
             "Tests\\": "tests/"
-        }
+        },
+        "files": [
+            "src/CLI/Functions.php"
+        ]
     },
     "scripts": {
-        "test": "pest"
+        "test": "pest",
+        "test:core": "pest --group=core",
+        "test:command": "pest --group=command",
+        "test:io": "pest --group=io",
+        "test:helpers": "pest --group=helpers"
     },
     "config": {
         "allow-plugins": {
