@@ -59,49 +59,25 @@ it('creates a conceal prompt', function () {
     expect($result)->toBe("Enter your password: \e[0m" . PHP_EOL . "hidden");
 });
 
-it('creates a confirmation prompt that accepts yes', function () {
-    fwrite($this->stdin, 'yes');
+it('creates a confirmation prompt', function (string $input, bool $expected) {
+    fwrite($this->stdin, $input);
     rewind($this->stdin);
 
     $result = $this->prompt->confirm('Confirm action?');
     $message = ob_get_clean();
 
     expect($message)->toBe("Confirm action? \e[0m");
-    expect($result)->toBeTrue();
-});
-
-it('creates a confirmation prompt that accepts y', function () {
-    fwrite($this->stdin, 'y');
-    rewind($this->stdin);
-
-    $result = $this->prompt->confirm('Confirm action?');
-    $message = ob_get_clean();
-
-    expect($message)->toBe("Confirm action? \e[0m");
-    expect($result)->toBeTrue();
-});
-
-it('creates a confirmation prompt that accepts no', function () {
-    fwrite($this->stdin, 'no');
-    rewind($this->stdin);
-
-    $result = $this->prompt->confirm('Confirm action?');
-    $message = ob_get_clean();
-
-    expect($message)->toBe("Confirm action? \e[0m");
-    expect($result)->toBeFalse();
-});
-
-it('creates a confirmation prompt that accepts n', function () {
-    fwrite($this->stdin, 'n');
-    rewind($this->stdin);
-
-    $result = $this->prompt->confirm('Confirm action?');
-    $message = ob_get_clean();
-
-    expect($message)->toBe("Confirm action? \e[0m");
-    expect($result)->toBeFalse();
-});
+    expect($result)->toBe($expected);
+})->with([
+    ['yes', true],
+    ['YES', true],
+    ['y', true],
+    ['Y', true],
+    ['no', false],
+    ['NO', false],
+    ['n', false],
+    ['N', false]
+]);
 
 it('creates a choice prompt', function () {
     fwrite($this->stdin, 1);
