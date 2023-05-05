@@ -107,6 +107,29 @@ it('creates a custom confirmation prompt', function (string $input, bool $expect
     ['N', false]
 ]);
 
+it('creates a case sensitive confirmation prompt', function (string $input, bool $expected) {
+    fwrite($this->stdin, $input);
+    rewind($this->stdin);
+
+    $result = $this->prompt->confirm(
+        message: 'Confirm action?',
+        acceptedAnswers: [
+            'yes' => true,
+            'Yes' => false,
+            'YeS' => false
+        ],
+        caseSensitive: true
+    );
+    $message = ob_get_clean();
+
+    expect($message)->toBe("Confirm action? \e[0m");
+    expect($result)->toBe($expected);
+})->with([
+    ['yes', true],
+    ['Yes', false],
+    ['YeS', false]
+]);
+
 it('creates a prompt that returns false after x attempts', function () {
     ob_end_clean();
 

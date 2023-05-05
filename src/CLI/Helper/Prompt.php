@@ -95,11 +95,16 @@ final class Prompt
      * @param string $message
      * @param int $attempts
      * @param array $acceptedAnswers
+     * @param bool $caseSensitive
      * @return bool
      */
 
-    public function confirm(string $message, int $attempts = 3, ?array $acceptedAnswers = null): bool
-    {
+    public function confirm(
+        string $message,
+        int $attempts = 3,
+        ?array $acceptedAnswers = null,
+        bool $caseSensitive = false
+    ): bool {
         $input = null;
         $acceptedAnswers ??= [
             'yes' => true,
@@ -108,11 +113,19 @@ final class Prompt
             'n' => false
         ];
 
+        if (!$caseSensitive) {
+            $acceptedAnswers = array_change_key_case($acceptedAnswers, CASE_LOWER);
+        }
+
         while ($this->confirmAttempts < $attempts) {
             $this->confirmAttempts++;
             $this->output->print($message . ' ', false);
 
-            $input = strtolower($this->getUserInput());
+            $input = $this->getUserInput();
+
+            if (!$caseSensitive) {
+                $input = strtolower($input);
+            }
 
             if (isset($acceptedAnswers[$input])) {
                 break;
