@@ -79,6 +79,31 @@ it('creates a confirmation prompt', function (string $input, bool $expected) {
     ['N', false]
 ]);
 
+it('creates a custom confirmation prompt', function (string $input, bool $expected) {
+    fwrite($this->stdin, $input);
+    rewind($this->stdin);
+
+    $result = $this->prompt->confirm('Confirm action?', [
+        'si' => true,
+        'no' => false,
+        's' => true,
+        'n' => false
+    ]);
+    $message = ob_get_clean();
+
+    expect($message)->toBe("Confirm action? \e[0m");
+    expect($result)->toBe($expected);
+})->with([
+    ['si', true],
+    ['SI', true],
+    ['s', true],
+    ['S', true],
+    ['no', false],
+    ['NO', false],
+    ['n', false],
+    ['N', false]
+]);
+
 it('creates a choice prompt', function () {
     fwrite($this->stdin, 1);
     rewind($this->stdin);

@@ -85,14 +85,16 @@ final class Prompt
      * Create a prompt that accepts yes/no user input
      *
      * @param string $message
+     * @param array $acceptedAnswers
      * @return bool
      */
 
-    public function confirm(string $message): bool
+    public function confirm(string $message, ?array $acceptedAnswers = null): bool
     {
         $this->output->print($message . ' ', false);
+
         $input = strtolower($this->getUserInput());
-        $acceptedAnswers = [
+        $acceptedAnswers ??= [
             'yes' => true,
             'y' => true,
             'no' => false,
