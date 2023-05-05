@@ -91,23 +91,19 @@ final class Prompt
     public function confirm(string $message): bool
     {
         $this->output->print($message . ' ', false);
-        $input = $this->getUserInput();
+        $input = strtolower($this->getUserInput());
         $acceptedAnswers = [
-            'y',
-            'Y',
-            'yes',
-            'YES',
-            'no',
-            'NO',
-            'n',
-            'N'
+            'yes' => true,
+            'y' => true,
+            'no' => false,
+            'n' => false
         ];
 
-        if (!in_array($input, $acceptedAnswers)) {
+        if (!isset($acceptedAnswers[$input])) {
             return $this->confirm($message);
         }
 
-        return strtolower($input) == 'y' || strtolower($input) == 'yes' ? true : false;
+        return $acceptedAnswers[$input];
     }
 
     /**
