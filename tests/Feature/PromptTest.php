@@ -5,7 +5,7 @@ use GSpataro\CLI\Output;
 use GSpataro\CLI\Helper\Prompt;
 use Tests\Utilities\FakeStream;
 
-uses()->group('helpers');
+uses(\Tests\TestCase::class)->group('helpers');
 
 beforeAll(function () {
     stream_wrapper_register('gstest', FakeStream::class);
@@ -83,12 +83,15 @@ it('creates a custom confirmation prompt', function (string $input, bool $expect
     fwrite($this->stdin, $input);
     rewind($this->stdin);
 
-    $result = $this->prompt->confirm('Confirm action?', [
-        'si' => true,
-        'no' => false,
-        's' => true,
-        'n' => false
-    ]);
+    $result = $this->prompt->confirm(
+        message: 'Confirm action?',
+        acceptedAnswers: [
+            'si' => true,
+            'no' => false,
+            's' => true,
+            'n' => false
+        ]
+    );
     $message = ob_get_clean();
 
     expect($message)->toBe("Confirm action? \e[0m");
@@ -103,6 +106,22 @@ it('creates a custom confirmation prompt', function (string $input, bool $expect
     ['n', false],
     ['N', false]
 ]);
+
+it('creates a prompt that returns false after x attempts', function () {
+    ob_end_clean();
+
+    $this->setPrivateProperty($this->prompt, 'confirmAttempts', 3);
+
+    fwrite($this->stdin, '');
+    rewind($this->stdin);
+
+    $result = $this->prompt->confirm(
+        message: 'Confirm action?',
+        attempts: 3
+    );
+
+    expect($result)->toBeFalse();
+});
 
 it('creates a choice prompt', function () {
     fwrite($this->stdin, 1);

@@ -8,6 +8,14 @@ use GSpataro\CLI\Interface\OutputInterface;
 final class Prompt
 {
     /**
+     * Store how many confirmation attempts were made
+     *
+     * @var int
+     */
+
+    private int $confirmAttempts = 0;
+
+    /**
      * Initialize Prompt object
      *
      * @param OutputInterface $output
@@ -85,15 +93,14 @@ final class Prompt
      * Create a prompt that accepts yes/no user input
      *
      * @param string $message
+     * @param int $attempts
      * @param array $acceptedAnswers
      * @return bool
      */
 
-    public function confirm(string $message, ?array $acceptedAnswers = null): bool
+    public function confirm(string $message, int $attempts = 3, ?array $acceptedAnswers = null): bool
     {
-        $this->output->print($message . ' ', false);
-
-        $input = strtolower($this->getUserInput());
+        $input = null;
         $acceptedAnswers ??= [
             'yes' => true,
             'y' => true,
@@ -101,11 +108,18 @@ final class Prompt
             'n' => false
         ];
 
-        if (!isset($acceptedAnswers[$input])) {
-            return $this->confirm($message);
+        while ($this->confirmAttempts < $attempts) {
+            $this->confirmAttempts++;
+            $this->output->print($message . ' ', false);
+
+            $input = strtolower($this->getUserInput());
+
+            if (isset($acceptedAnswers[$input])) {
+                break;
+            }
         }
 
-        return $acceptedAnswers[$input];
+        return $acceptedAnswers[$input] ?? false;
     }
 
     /**
