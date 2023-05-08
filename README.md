@@ -30,6 +30,8 @@ $handler = new CLI\Handler($commands);
 $handler->deploy();
 ```
 
+If you want to learn more about this component's features please read the [WIKI](https://github.com/gspataro/CLI/wiki).
+
 ## Contribute
 
 If you want to contribute to this repository please follow the guidelines here: [CONTRIBUTING.md](CONTRIBUTING.md)
