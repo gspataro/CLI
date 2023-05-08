@@ -42,4 +42,4 @@ To see all the latest changes see the [CHANGELOG](CHANGELOG.md).
 
 ## License
 
-The GSpataro/CLI component is licensed under the [MIT License](LICENSE.md).
+The GSpataro/CLI component is licensed under the [MIT License](LICENSE).
