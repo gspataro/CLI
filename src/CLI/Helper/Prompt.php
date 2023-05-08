@@ -8,6 +8,14 @@ use GSpataro\CLI\Interface\OutputInterface;
 final class Prompt
 {
     /**
+     * Store how many confirmation attempts were made
+     *
+     * @var int
+     */
+
+    private int $confirmAttempts = 0;
+
+    /**
      * Initialize Prompt object
      *
      * @param OutputInterface $output
@@ -85,29 +93,46 @@ final class Prompt
      * Create a prompt that accepts yes/no user input
      *
      * @param string $message
+     * @param int $attempts
+     * @param array $acceptedAnswers
+     * @param bool $caseSensitive
      * @return bool
      */
 
-    public function confirm(string $message): bool
-    {
-        $this->output->print($message . ' ', false);
-        $input = $this->getUserInput();
-        $acceptedAnswers = [
-            'y',
-            'Y',
-            'yes',
-            'YES',
-            'no',
-            'NO',
-            'n',
-            'N'
+    public function confirm(
+        string $message,
+        int $attempts = 3,
+        ?array $acceptedAnswers = null,
+        bool $caseSensitive = false
+    ): bool {
+        $input = null;
+        $acceptedAnswers ??= [
+            'yes' => true,
+            'y' => true,
+            'no' => false,
+            'n' => false
         ];
 
-        if (!in_array($input, $acceptedAnswers)) {
-            return $this->confirm($message);
+        if (!$caseSensitive) {
+            $acceptedAnswers = array_change_key_case($acceptedAnswers, CASE_LOWER);
         }
 
-        return strtolower($input) == 'y' || strtolower($input) == 'yes' ? true : false;
+        while ($this->confirmAttempts < $attempts) {
+            $this->confirmAttempts++;
+            $this->output->print($message . ' ', false);
+
+            $input = $this->getUserInput();
+
+            if (!$caseSensitive) {
+                $input = strtolower($input);
+            }
+
+            if (isset($acceptedAnswers[$input])) {
+                break;
+            }
+        }
+
+        return $acceptedAnswers[$input] ?? false;
     }
 
     /**

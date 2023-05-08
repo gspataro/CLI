@@ -65,7 +65,7 @@ class Manpage
      * @return void
      */
 
-    private function prepareTable(): void
+    public function prepareTable(): void
     {
         $this->table = new Table($this->output);
         $this->table->setStyle('row', '{italic}');
