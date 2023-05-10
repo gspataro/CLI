@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2.0.1 - 10/05/2023
+
+### Changed
+
+- Removed readonly from Command::$options property
+
 ## 2.0.0 - 08/05/2023
 
 
