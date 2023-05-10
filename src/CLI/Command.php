@@ -41,7 +41,7 @@ class Command
      * @var array
      */
 
-    protected readonly array $options;
+    protected array $options;
 
     /**
      * Store arguments
