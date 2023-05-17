@@ -24,7 +24,7 @@ it('returns a table column', function () {
 });
 
 it('returns a basic table', function () {
-    $this->table->setRows(
+    $this->table->structure(
         row(['Name', 'Surname', 'City'], 'heading'),
         row(["Wolfgang Amadeus", "Mozart", "Vienna"]),
         row(["Ludwig", "van Beethoven", "Bonn"]),
@@ -43,7 +43,7 @@ it('returns a basic table', function () {
 });
 
 it('returns a basic table with empty columns', function () {
-    $this->table->setRows(
+    $this->table->structure(
         row(["Name", "Surname", "City"], 'heading'),
         row(["Wolfgang Amadeus", "", "Vienna"]),
         row(["Ludwig", "van Beethoven"]),
@@ -62,7 +62,7 @@ it('returns a basic table with empty columns', function () {
 });
 
 it('add rows to the table', function () {
-    $this->table->setRows(
+    $this->table->structure(
         row(["Name", "Surname", "City"], 'heading'),
         row(["Wolfgang Amadeus", "Mozart", "Vienna"]),
         row(["Ludwig", "van Beethoven", "Bonn"]),
@@ -83,7 +83,7 @@ it('add rows to the table', function () {
 });
 
 it('add separators to the table', function () {
-    $this->table->setRows(
+    $this->table->structure(
         row(["Name", "Surname", "City"], 'heading'),
         row(["Wolfgang Amadeus", "Mozart", "Vienna"]),
         row(["Ludwig", "van Beethoven", "Bonn"]),
@@ -104,7 +104,7 @@ it('add separators to the table', function () {
 });
 
 it('customizes padding size', function () {
-    $this->table->setRows(
+    $this->table->structure(
         row(["Name", "Surname", "City"], 'heading'),
         row(["Wolfgang Amadeus", "Mozart", "Vienna"]),
         row(["Ludwig", "van Beethoven", "Bonn"]),
@@ -124,7 +124,7 @@ it('customizes padding size', function () {
 });
 
 it('customizes padding character', function () {
-    $this->table->setRows(
+    $this->table->structure(
         row(["Name", "Surname", "City"], 'heading'),
         row(["Wolfgang Amadeus", "Mozart", "Vienna"]),
         row(["Ludwig", "van Beethoven", "Bonn"]),
@@ -147,7 +147,7 @@ it('customizes table rows', function () {
     $this->table->setStyle('heading', '{bg_green}{bold}');
     $this->table->setStyle('row', '{bg_white}');
     $this->table->setStyle('rowAlt', '{bg_white_bright}');
-    $this->table->setRows(
+    $this->table->structure(
         row(["Name", "Surname", "City"], 'heading'),
         row(["Wolfgang Amadeus", "Mozart", "Vienna"], 'rowAlt'),
         row(["Ludwig", "van Beethoven", "Bonn"]),
@@ -166,7 +166,7 @@ it('customizes table rows', function () {
 });
 
 it('returns a table with style applied to rows and columns', function () {
-    $this->table->setRows(
+    $this->table->structure(
         row(['Name', 'Surname', 'City'], 'heading'),
         row([col("Wolfgang Amadeus", 'heading'), "Mozart", "Vienna"]),
         row([col("Ludwig", 'heading'), "van Beethoven", "Bonn"]),
@@ -185,7 +185,7 @@ it('returns a table with style applied to rows and columns', function () {
 });
 
 it('returns a table with a separator', function () {
-    $this->table->setRows(
+    $this->table->structure(
         row(['Name', 'Surname', 'City'], 'heading'),
         [],
         row(["Wolfgang Amadeus", "Mozart", "Vienna"]),

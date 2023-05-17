@@ -70,13 +70,13 @@ final class Table
     }
 
     /**
-     * Set table rows
+     * Set table structure
      *
      * @param array $rows
      * @return void
      */
 
-    public function setRows(array ...$rows): void
+    public function structure(array ...$rows): void
     {
         $this->structure = $rows;
     }
