@@ -38,11 +38,11 @@ it('creates a command', function () {
         ]
     ];
 
-    $this->commandsCollection->create('foo')->setCallback($callback)->setOptions($options);
+    $this->commandsCollection->create('foo')->execute($callback)->setOptions($options);
 
     $commands = $this->readPrivateProperty($this->commandsCollection, 'commands');
     $expected = new Command();
-    $expected->setName('foo')->setCallback($callback)->setOptions($options);
+    $expected->setName('foo')->execute($callback)->setOptions($options);
 
     expect($commands['foo'])->toEqual($expected);
 });

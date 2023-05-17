@@ -17,7 +17,7 @@ beforeEach(function () {
 
     $this->commands->create('login')
         ->setDescription('Sign in')
-        ->setCallback(fn($input, $output, $email, $password) => 'login')
+        ->execute(fn($input, $output, $email, $password) => 'login')
         ->setOptions([
             'email' => [
                 'type' => 'required',
@@ -33,7 +33,7 @@ beforeEach(function () {
 
     $this->commands->create('register')
         ->setDescription('Sign up')
-        ->setCallback(fn($input, $output, $email, $password, $name) => 'login')
+        ->execute(fn($input, $output, $email, $password, $name) => 'login')
         ->setOptions([
             'email' => [
                 'type' => 'required',

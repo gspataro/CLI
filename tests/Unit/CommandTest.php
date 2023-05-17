@@ -24,7 +24,7 @@ it('sets and retrieves the command description', function () {
 
 it('sets the command callback', function () {
     $command = new Command();
-    $command->setCallback(fn() => 'lorem ipsum');
+    $command->execute(fn() => 'lorem ipsum');
     $result = $this->readPrivateProperty($command, 'callback');
 
     expect($result)->toBeCallable();
@@ -119,7 +119,7 @@ it('sets and retrieves the command options', function () {
 it('runs a command callback', function () {
     $result = null;
     $command = new Command();
-    $command->setCallback(function ($input, $output, $key, $value) use (&$result) {
+    $command->execute(function ($input, $output, $key, $value) use (&$result) {
         $result = [
             'key' => $key,
             'value' => $value

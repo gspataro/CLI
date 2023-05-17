@@ -18,7 +18,7 @@ it('recognizes long options', function () {
     $result = [];
 
     $this->collection->create('set')
-        ->setCallback(function ($input, $output, $key, $value) use (&$result) {
+        ->execute(function ($input, $output, $key, $value) use (&$result) {
             $result['key'] = $key;
             $result['value'] = $value;
         })
@@ -41,7 +41,7 @@ it('recognizes short options', function () {
     $result = [];
 
     $this->collection->create('set')
-        ->setCallback(function ($input, $output, $key, $value) use (&$result) {
+        ->execute(function ($input, $output, $key, $value) use (&$result) {
             $result['key'] = $key;
             $result['value'] = $value;
         })
@@ -70,7 +70,7 @@ it('recognizes required options', function () {
     $result = [];
 
     $this->collection->create('set')
-        ->setCallback(function ($input, $output, $key, $value) use (&$result) {
+        ->execute(function ($input, $output, $key, $value) use (&$result) {
             $result['key'] = $key;
             $result['value'] = $value;
         })
@@ -94,7 +94,7 @@ it('recognizes optional options', function () {
     $result = [];
 
     $this->collection->create('set')
-        ->setCallback(function ($input, $output, $key, $value, $type, $description) use (&$result) {
+        ->execute(function ($input, $output, $key, $value, $type, $description) use (&$result) {
             $result['key'] = $key;
             $result['value'] = $value;
             $result['type'] = $type;
@@ -131,7 +131,7 @@ it('recognizes novalue options', function () {
     $result = [];
 
     $this->collection->create('set')
-        ->setCallback(function ($input, $output, $key, $value, $overwrite) use (&$result) {
+        ->execute(function ($input, $output, $key, $value, $overwrite) use (&$result) {
             $result['key'] = $key;
             $result['value'] = $value;
             $result['overwrite'] = $overwrite === false ? 'yes' : 'no';
@@ -163,7 +163,7 @@ it('calls a callable command', function () {
     $result = [];
 
     $this->collection->create('set')
-        ->setCallback(function ($input, $output, $key, $value) use (&$result) {
+        ->execute(function ($input, $output, $key, $value) use (&$result) {
             $result[] = $output->prepare('Key: ' . $key);
             $result[] = $output->prepare('Value: ' . $value);
         })

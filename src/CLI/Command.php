@@ -78,13 +78,13 @@ class Command
     }
 
     /**
-     * Set command callback
+     * Set command callback to execute
      *
      * @param callable $callback
      * @return static
      */
 
-    final public function setCallback(callable $callback): static
+    final public function execute(callable $callback): static
     {
         $this->callback = Closure::fromCallable($callback);
         return $this;
