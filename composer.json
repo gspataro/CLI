@@ -17,10 +17,10 @@
     },
     "autoload": {
         "psr-4": {
-            "GSpataro\\CLI\\": "src/CLI/"
+            "GSpataro\\CLI\\": "src/"
         },
         "files": [
-            "src/CLI/Functions.php"
+            "src/Functions.php"
         ]
     },
     "autoload-dev": {
