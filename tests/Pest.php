@@ -1,5 +1,7 @@
 <?php
 
+use Tests\Utilities\FakeStream;
+
 /*
 |--------------------------------------------------------------------------
 | Test Case
@@ -10,6 +12,14 @@
 | need to change it using the "uses()" function to bind a different classes or traits.
 |
 */
+
+uses()->beforeAll(function () {
+    stream_wrapper_register('gstest', FakeStream::class);
+})->in(__DIR__);
+
+uses()->afterAll(function () {
+    stream_wrapper_unregister('gstest');
+})->in(__DIR__);
 
 /*
 |--------------------------------------------------------------------------

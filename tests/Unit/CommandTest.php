@@ -9,14 +9,6 @@ use Tests\Utilities\FakeStream;
 
 uses(\Tests\TestCase::class)->group('core', 'command');
 
-beforeAll(function () {
-    stream_wrapper_register('gstest', FakeStream::class);
-});
-
-afterAll(function () {
-    stream_wrapper_unregister('gstest');
-});
-
 beforeEach(function () {
     $this->outputStream = fopen('gstest://output', 'w+');
 });

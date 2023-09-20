@@ -5,14 +5,6 @@ use Tests\Utilities\FakeStream;
 
 uses(\Tests\TestCase::class)->group('io');
 
-beforeAll(function () {
-    stream_wrapper_register('gstest', FakeStream::class);
-});
-
-afterAll(function () {
-    stream_wrapper_unregister('gstest');
-});
-
 beforeEach(function () {
     $this->outputStream = fopen('gstest://output', 'w+');
     $this->output = new Output($this->outputStream);
