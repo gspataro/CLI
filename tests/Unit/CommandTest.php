@@ -5,8 +5,21 @@ use GSpataro\CLI\Output;
 use GSpataro\CLI\Command;
 use GSpataro\CLI\Exception\InvalidCommandOptionsDefinitionException;
 use Tests\Utilities\Controller;
+use Tests\Utilities\FakeStream;
 
 uses(\Tests\TestCase::class)->group('core', 'command');
+
+beforeAll(function () {
+    stream_wrapper_register('gstest', FakeStream::class);
+});
+
+afterAll(function () {
+    stream_wrapper_unregister('gstest');
+});
+
+beforeEach(function () {
+    $this->outputStream = fopen('gstest://output', 'w+');
+});
 
 it('sets and retrieves the command name', function () {
     $command = new Command();
@@ -134,12 +147,11 @@ it('runs a command callback', function () {
 });
 
 it('runs a command class', function () {
-    $this->startOutputBuffer();
-
     $command = new Controller();
-    $command->run(new Input(), new Output(), ['key' => 'foo', 'value' => 'bar']);
+    $command->run(new Input(), new Output($this->outputStream), ['key' => 'foo', 'value' => 'bar']);
 
-    $result = $this->getOutput();
+    rewind($this->outputStream);
+    $result = stream_get_contents($this->outputStream);
     $expected = "Key: foo\e[0m" . PHP_EOL;
     $expected .= "Value: bar\e[0m" . PHP_EOL;
 
