@@ -1,14 +1,22 @@
 <?php
 
 use GSpataro\CLI\Output;
+use Tests\Utilities\FakeStream;
 
 uses(\Tests\TestCase::class)->group('io');
 
-beforeEach(function () {
-    $this->output = new Output();
-})->startOutputBuffer();
+beforeAll(function () {
+    stream_wrapper_register('gstest', FakeStream::class);
+});
 
-afterEach()->endOutputBuffer();
+afterAll(function () {
+    stream_wrapper_unregister('gstest');
+});
+
+beforeEach(function () {
+    $this->outputStream = fopen('gstest://output', 'w+');
+    $this->output = new Output($this->outputStream);
+});
 
 it('returns a string with a new line', function () {
     $this->output->print(
@@ -18,7 +26,8 @@ it('returns a string with a new line', function () {
         raw: false
     );
 
-    $result = $this->getOutput();
+    rewind($this->outputStream);
+    $result = stream_get_contents($this->outputStream);
 
     expect($result)
         ->toBeString()
@@ -33,7 +42,8 @@ it('returns a string without a new line', function () {
         raw: false
     );
 
-    $result = $this->getOutput();
+    rewind($this->outputStream);
+    $result = stream_get_contents($this->outputStream);
 
     expect($result)
         ->toBeString()
@@ -49,7 +59,8 @@ it('returns a string without formatting', function () {
         raw: true
     );
 
-    $result = $this->getOutput();
+    rewind($this->outputStream);
+    $result = stream_get_contents($this->outputStream);
 
     expect($result)
         ->toBeString()
@@ -64,7 +75,8 @@ it('returns a string with autoclear', function () {
         raw: false
     );
 
-    $result = $this->getOutput();
+    rewind($this->outputStream);
+    $result = stream_get_contents($this->outputStream);
 
     expect($result)
         ->toBeString()
@@ -79,7 +91,8 @@ it('returns a string without autoclear', function () {
         raw: false
     );
 
-    $result = $this->getOutput();
+    rewind($this->outputStream);
+    $result = stream_get_contents($this->outputStream);
 
     expect($result)
         ->toBeString()
@@ -94,7 +107,8 @@ it('returns a formatted string', function () {
         raw: false
     );
 
-    $result = $this->getOutput();
+    rewind($this->outputStream);
+    $result = stream_get_contents($this->outputStream);
 
     expect($result)
         ->toBeString()
