@@ -20,19 +20,25 @@ final class Output implements OutputInterface
      * @var resource
      */
 
-    private mixed $outputStream;
+    private readonly mixed $outputStream;
 
     /**
      * Initialize Output object
      *
-     * @param string|null $outputPath
+     * @param mixed $resource
      */
 
     public function __construct(
-        private readonly ?string $outputPath = 'php://output'
+        mixed $resource = null
     ) {
         // Open and store output stream
-        $this->outputStream = fopen($outputPath, 'w');
+        if (is_null($resource)) {
+            $this->outputStream = fopen('php://output', 'w');
+        } elseif (is_resource($resource)) {
+            $this->outputStream = $resource;
+        } else {
+            throw new Exception\InvalidResourceException("Invalid resource provided as output stream.");
+        }
 
         // Get the format enums and prepare an array of usable placeholders
         $enums = [
