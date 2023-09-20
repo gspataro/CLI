@@ -11,6 +11,10 @@ beforeAll(function () {
     stream_wrapper_register('gstest', FakeStream::class);
 });
 
+afterAll(function () {
+    stream_wrapper_unregister('gstest');
+});
+
 beforeEach(function () {
     ob_start();
     $this->outputBufferingLevel = ob_get_level();
