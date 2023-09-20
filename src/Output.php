@@ -15,11 +15,25 @@ final class Output implements OutputInterface
     private array $formatPlaceholders = [];
 
     /**
-     * Initialize Output object
+     * Store output stream
+     *
+     * @var resource
      */
 
-    public function __construct()
-    {
+    private mixed $outputStream;
+
+    /**
+     * Initialize Output object
+     *
+     * @param string|null $outputPath
+     */
+
+    public function __construct(
+        private readonly ?string $outputPath = 'php://output'
+    ) {
+        // Open and store output stream
+        $this->outputStream = fopen($outputPath, 'w');
+
         // Get the format enums and prepare an array of usable placeholders
         $enums = [
             Enum\ColorsEnum::class,
@@ -102,6 +116,6 @@ final class Output implements OutputInterface
     public function print(string $text, bool $finalNewLine = true, bool $autoclear = true, bool $raw = false): void
     {
         $text = $this->prepare($text, $finalNewLine, $autoclear, $raw);
-        printf($text);
+        fwrite($this->outputStream, $text);
     }
 }
