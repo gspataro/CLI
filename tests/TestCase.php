@@ -7,22 +7,6 @@ use PHPUnit\Framework\TestCase as BaseTestCase;
 class TestCase extends BaseTestCase
 {
     /**
-     * Store output buffering status
-     *
-     * @var bool
-     */
-
-    private bool $outputBufferActive = false;
-
-    /**
-     * Store output buffering level
-     *
-     * @var int
-     */
-
-    private int $outputBufferLevel;
-
-    /**
      * Read the content of a private property
      *
      * @param object $object
