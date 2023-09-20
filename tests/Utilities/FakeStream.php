@@ -10,6 +10,7 @@ class FakeStream
 {
     public int $position;
     public mixed $content;
+    public mixed $context;
 
     public function stream_open($path, $mode, $options, &$opened_path)
     {
@@ -94,5 +95,10 @@ class FakeStream
         }
 
         return false;
+    }
+
+    public function stream_stat()
+    {
+        return [];
     }
 }
