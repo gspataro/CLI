@@ -55,6 +55,17 @@ final class Output implements OutputInterface
     }
 
     /**
+     * Get the output stream
+     *
+     * @return mixed
+     */
+
+    public function getStream(): mixed
+    {
+        return $this->outputStream;
+    }
+
+    /**
      * Prepare the text replacing placeholders with formats
      *
      * @param string $text
