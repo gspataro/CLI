@@ -1,20 +1,30 @@
 <?php
 
 use GSpataro\CLI\Input;
+use GSpataro\CLI\Output;
 use GSpataro\CLI\Handler;
 use GSpataro\CLI\CommandsCollection;
-use GSpataro\CLI\Interface\InputInterface;
-use GSpataro\CLI\Interface\OutputInterface;
 use Tests\Utilities\Controller;
+use Tests\Utilities\FakeStream;
 
 uses(\Tests\TestCase::class)->group('core');
 
+beforeAll(function () {
+    stream_wrapper_register('gstest', FakeStream::class);
+});
+
+afterAll(function () {
+    stream_wrapper_unregister('gstest');
+});
+
 beforeEach(function () {
     $this->collection = new CommandsCollection();
+    $this->outputStream = fopen('gstest://output', 'w+');
 });
 
 it('recognizes long options', function () {
     $input = new Input(['script.php', 'set', '--key=foo', '--value=bar']);
+    $output = new Output($this->outputStream);
     $result = [];
 
     $this->collection->create('set')
@@ -27,7 +37,7 @@ it('recognizes long options', function () {
             'value' => ['type' => 'required']
         ]);
 
-    $handler = new Handler($this->collection, $input);
+    $handler = new Handler($this->collection, $input, $output);
     $handler->deploy();
 
     expect($result)->toBe([
@@ -38,6 +48,7 @@ it('recognizes long options', function () {
 
 it('recognizes short options', function () {
     $input = new Input(['script.php', 'set', '-k', 'foo', '-v', 'bar']);
+    $output = new Output($this->outputStream);
     $result = [];
 
     $this->collection->create('set')
@@ -56,7 +67,7 @@ it('recognizes short options', function () {
             ]
         ]);
 
-    $handler = new Handler($this->collection, $input);
+    $handler = new Handler($this->collection, $input, $output);
     $handler->deploy();
 
     expect($result)->toBe([
@@ -67,6 +78,7 @@ it('recognizes short options', function () {
 
 it('recognizes required options', function () {
     $input = new Input(['script.php', 'set', '--key=foo']);
+    $output = new Output($this->outputStream);
     $result = [];
 
     $this->collection->create('set')
@@ -83,7 +95,7 @@ it('recognizes required options', function () {
             ]
         ]);
 
-    $handler = new Handler($this->collection, $input);
+    $handler = new Handler($this->collection, $input, $output);
     $handler->deploy();
 
     expect($result)->toBe([]);
@@ -91,6 +103,7 @@ it('recognizes required options', function () {
 
 it('recognizes optional options', function () {
     $input = new Input(['script.php', 'set', '--key=foo', '--value=bar', '--type=config']);
+    $output = new Output($this->outputStream);
     $result = [];
 
     $this->collection->create('set')
@@ -115,7 +128,7 @@ it('recognizes optional options', function () {
             ]
         ]);
 
-    $handler = new Handler($this->collection, $input);
+    $handler = new Handler($this->collection, $input, $output);
     $handler->deploy();
 
     expect($result)->toBe([
@@ -128,6 +141,7 @@ it('recognizes optional options', function () {
 
 it('recognizes novalue options', function () {
     $input = new Input(['script.php', 'set', '--key=foo', '--overwrite', '--value=bar']);
+    $output = new Output($this->outputStream);
     $result = [];
 
     $this->collection->create('set')
@@ -148,7 +162,7 @@ it('recognizes novalue options', function () {
             ]
             ]);
 
-    $handler = new Handler($this->collection, $input);
+    $handler = new Handler($this->collection, $input, $output);
     $handler->deploy();
 
     expect($result)->toBe([
@@ -160,6 +174,7 @@ it('recognizes novalue options', function () {
 
 it('calls a callable command', function () {
     $input = new Input(['script.php', 'set', '--key=foo', '--value=bar']);
+    $output = new Output($this->outputStream);
     $result = [];
 
     $this->collection->create('set')
@@ -176,7 +191,7 @@ it('calls a callable command', function () {
             ]
         ]);
 
-    $handler = new Handler($this->collection, $input);
+    $handler = new Handler($this->collection, $input, $output);
     $handler->deploy();
 
     expect($result)->toEqual([
@@ -186,17 +201,17 @@ it('calls a callable command', function () {
 });
 
 it('calls an object command', function () {
-    $this->startOutputBuffer();
-
     $input = new Input(['script.php', 'set', '--key=foo', '--value=bar']);
+    $output = new Output($this->outputStream);
     $command = new Controller();
 
     $this->collection->register($command);
 
-    $handler = new Handler($this->collection, $input);
+    $handler = new Handler($this->collection, $input, $output);
     $handler->deploy();
 
-    $result = $this->getOutput();
+    rewind($this->outputStream);
+    $result = stream_get_contents($this->outputStream);
     $expected = "Key: foo\e[0m" . PHP_EOL;
     $expected .= "Value: bar\e[0m" . PHP_EOL;
 
