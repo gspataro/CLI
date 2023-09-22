@@ -8,21 +8,11 @@ use Tests\Utilities\FakeStream;
 uses(\Tests\TestCase::class)->group('helpers');
 
 beforeEach(function () {
-    ob_start();
-    $this->outputBufferingLevel = ob_get_level();
-
     $this->stdin = fopen('gstest://stdin', 'r+');
+    $this->outputStream = fopen('gstest://output', 'w+');
     $this->input = new Input(standardInput: $this->stdin);
-    $this->output = new Output();
+    $this->output = new Output($this->outputStream);
     $this->prompt = new Prompt($this->input, $this->output);
-});
-
-afterEach(function () {
-    if ($this->outputBufferingLevel !== ob_get_level()) {
-        while (ob_get_level() >= $this->outputBufferingLevel) {
-            ob_end_clean();
-        }
-    }
 });
 
 it('creates a single prompt', function () {
@@ -30,7 +20,9 @@ it('creates a single prompt', function () {
     rewind($this->stdin);
 
     $value = $this->prompt->single('Enter something:');
-    $result = ob_get_clean() . $value;
+
+    rewind($this->outputStream);
+    $result = stream_get_contents($this->outputStream) . $value;
 
     expect($result)->toBe("Enter something: \e[0mfoo");
 });
@@ -40,7 +32,9 @@ it('creates a multiple prompt', function () {
     rewind($this->stdin);
 
     $value = $this->prompt->multiple('List your interests:', '|');
-    $result = ob_get_clean() . implode('|', $value);
+
+    rewind($this->outputStream);
+    $result = stream_get_contents($this->outputStream) . implode('|', $value);
 
     expect($result)->toBe("List your interests: \e[0mfoo|bar");
 });
@@ -50,9 +44,11 @@ it('creates a conceal prompt', function () {
     rewind($this->stdin);
 
     $value = $this->prompt->conceal('Enter your password:');
-    $result = ob_get_clean() . $value;
 
-    expect($result)->toBe("Enter your password: \e[0m" . PHP_EOL . "hidden");
+    rewind($this->outputStream);
+    $result = stream_get_contents($this->outputStream) . $value;
+
+    expect($result)->toBe("Enter your password: \e[0m" . "hidden");
 });
 
 it('creates a confirmation prompt', function (string $input, bool $expected) {
@@ -60,7 +56,9 @@ it('creates a confirmation prompt', function (string $input, bool $expected) {
     rewind($this->stdin);
 
     $result = $this->prompt->confirm('Confirm action?');
-    $message = ob_get_clean();
+
+    rewind($this->outputStream);
+    $message = stream_get_contents($this->outputStream);
 
     expect($message)->toBe("Confirm action? \e[0m");
     expect($result)->toBe($expected);
@@ -88,7 +86,9 @@ it('creates a custom confirmation prompt', function (string $input, bool $expect
             'n' => false
         ]
     );
-    $message = ob_get_clean();
+
+    rewind($this->outputStream);
+    $message = stream_get_contents($this->outputStream);
 
     expect($message)->toBe("Confirm action? \e[0m");
     expect($result)->toBe($expected);
@@ -116,7 +116,9 @@ it('creates a case sensitive confirmation prompt', function (string $input, bool
         ],
         caseSensitive: true
     );
-    $message = ob_get_clean();
+
+    rewind($this->outputStream);
+    $message = stream_get_contents($this->outputStream);
 
     expect($message)->toBe("Confirm action? \e[0m");
     expect($result)->toBe($expected);
@@ -127,8 +129,6 @@ it('creates a case sensitive confirmation prompt', function (string $input, bool
 ]);
 
 it('creates a prompt that returns false after x attempts', function () {
-    ob_end_clean();
-
     $this->setPrivateProperty($this->prompt, 'confirmAttempts', 3);
 
     fwrite($this->stdin, '');
@@ -153,7 +153,9 @@ it('creates a choice prompt', function () {
     ];
 
     $result = $this->prompt->choice('Choose your favourite composer:', $choices);
-    $message = ob_get_clean();
+
+    rewind($this->outputStream);
+    $message = stream_get_contents($this->outputStream);
 
     $expected = "0 - Mozart\e[0m" . PHP_EOL;
     $expected .= "1 - Beethoven\e[0m" . PHP_EOL;
