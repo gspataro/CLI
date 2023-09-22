@@ -9,13 +9,14 @@ use function GSpataro\CLI\Functions\row;
 uses()->group('helpers');
 
 beforeEach(function () {
-    $this->output = new Output();
+    $this->outputStream = fopen('gstest://output', 'w+');
+    $this->output = new Output($this->outputStream);
     $this->table = new Table($this->output);
 });
 
 it('returns a table row', function () {
     $result = row(['foo', 'bar'], 'heading');
-    expect($result)->tobe(['heading' => ['foo', 'bar']]);
+    expect($result)->toBe(['heading' => ['foo', 'bar']]);
 });
 
 it('returns a table column', function () {
@@ -31,13 +32,17 @@ it('returns a basic table', function () {
         row(["Sergej Vasil'Evic", "Rachmaninoff", "Moscow"]),
         row(["Vincenzo", "Bellini", "Catania"])
     );
-    $result = $this->table->build();
+    $this->table->render();
 
-    $expected = "{bold}Name                  {clear}{bold}Surname           {clear}{bold}City{clear}{nl}";
-    $expected .= "Wolfgang Amadeus      {clear}Mozart            {clear}Vienna{clear}{nl}";
-    $expected .= "Ludwig                {clear}van Beethoven     {clear}Bonn{clear}{nl}";
-    $expected .= "Sergej Vasil'Evic     {clear}Rachmaninoff      {clear}Moscow{clear}{nl}";
-    $expected .= "Vincenzo              {clear}Bellini           {clear}Catania{clear}{nl}";
+    rewind($this->outputStream);
+    $result = stream_get_contents($this->outputStream);
+
+    $expected = "\033[1mName                  \033[0m\033[1mSurname           \033[0m\033[1mCity\033[0m" . PHP_EOL;
+    $expected .= "Wolfgang Amadeus      \033[0mMozart            \033[0mVienna\033[0m" . PHP_EOL;
+    $expected .= "Ludwig                \033[0mvan Beethoven     \033[0mBonn\033[0m" . PHP_EOL;
+    $expected .= "Sergej Vasil'Evic     \033[0mRachmaninoff      \033[0mMoscow\033[0m" . PHP_EOL;
+    $expected .= "Vincenzo              \033[0mBellini           \033[0mCatania\033[0m" . PHP_EOL;
+    $expected .= "\033[0m" . PHP_EOL;
 
     expect($result)->toEqual($expected);
 });
@@ -50,13 +55,17 @@ it('returns a basic table with empty columns', function () {
         row(["Sergej Vasil'Evic", "Rachmaninoff", "Moscow"]),
         row(["Vincenzo", "Bellini"])
     );
-    $result = $this->table->build();
+    $this->table->render();
 
-    $expected = "{bold}Name                  {clear}{bold}Surname           {clear}{bold}City{clear}{nl}";
-    $expected .= "Wolfgang Amadeus      {clear}                  {clear}Vienna{clear}{nl}";
-    $expected .= "Ludwig                {clear}van Beethoven     {clear}{clear}{nl}";
-    $expected .= "Sergej Vasil'Evic     {clear}Rachmaninoff      {clear}Moscow{clear}{nl}";
-    $expected .= "Vincenzo              {clear}Bellini           {clear}{clear}{nl}";
+    rewind($this->outputStream);
+    $result = stream_get_contents($this->outputStream);
+
+    $expected = "\033[1mName                  \033[0m\033[1mSurname           \033[0m\033[1mCity\033[0m" . PHP_EOL;
+    $expected .= "Wolfgang Amadeus      \033[0m                  \033[0mVienna\033[0m" . PHP_EOL;
+    $expected .= "Ludwig                \033[0mvan Beethoven     \033[0m\033[0m" . PHP_EOL;
+    $expected .= "Sergej Vasil'Evic     \033[0mRachmaninoff      \033[0mMoscow\033[0m" . PHP_EOL;
+    $expected .= "Vincenzo              \033[0mBellini           \033[0m\033[0m" . PHP_EOL;
+    $expected .= "\033[0m" . PHP_EOL;
 
     expect($result)->toEqual($expected);
 });
@@ -70,14 +79,18 @@ it('add rows to the table', function () {
     );
     $this->table->addRow(['Just', 'Another', 'Heading'], 'heading');
     $this->table->addRow(['Vincenzo', 'Bellini', 'Catania']);
-    $result = $this->table->build();
+    $this->table->render();
 
-    $expected = "{bold}Name                  {clear}{bold}Surname           {clear}{bold}City{clear}{nl}";
-    $expected .= "Wolfgang Amadeus      {clear}Mozart            {clear}Vienna{clear}{nl}";
-    $expected .= "Ludwig                {clear}van Beethoven     {clear}Bonn{clear}{nl}";
-    $expected .= "Sergej Vasil'Evic     {clear}Rachmaninoff      {clear}Moscow{clear}{nl}";
-    $expected .= "{bold}Just                  {clear}{bold}Another           {clear}{bold}Heading{clear}{nl}";
-    $expected .= "Vincenzo              {clear}Bellini           {clear}Catania{clear}{nl}";
+    rewind($this->outputStream);
+    $result = stream_get_contents($this->outputStream);
+
+    $expected = "\033[1mName                  \033[0m\033[1mSurname           \033[0m\033[1mCity\033[0m" . PHP_EOL;
+    $expected .= "Wolfgang Amadeus      \033[0mMozart            \033[0mVienna\033[0m" . PHP_EOL;
+    $expected .= "Ludwig                \033[0mvan Beethoven     \033[0mBonn\033[0m" . PHP_EOL;
+    $expected .= "Sergej Vasil'Evic     \033[0mRachmaninoff      \033[0mMoscow\033[0m" . PHP_EOL;
+    $expected .= "\033[1mJust                  \033[0m\033[1mAnother           \033[0m\033[1mHeading\033[0m" . PHP_EOL;
+    $expected .= "Vincenzo              \033[0mBellini           \033[0mCatania\033[0m" . PHP_EOL;
+    $expected .= "\033[0m" . PHP_EOL;
 
     expect($result)->toEqual($expected);
 });
@@ -91,14 +104,18 @@ it('add separators to the table', function () {
     );
     $this->table->addSeparator();
     $this->table->addRow(["Vincenzo", "Bellini", "Catania"]);
-    $result = $this->table->build();
+    $this->table->render();
 
-    $expected = "{bold}Name                  {clear}{bold}Surname           {clear}{bold}City{clear}{nl}";
-    $expected .= "Wolfgang Amadeus      {clear}Mozart            {clear}Vienna{clear}{nl}";
-    $expected .= "Ludwig                {clear}van Beethoven     {clear}Bonn{clear}{nl}";
-    $expected .= "Sergej Vasil'Evic     {clear}Rachmaninoff      {clear}Moscow{clear}{nl}";
-    $expected .= "{nl}";
-    $expected .= "Vincenzo              {clear}Bellini           {clear}Catania{clear}{nl}";
+    rewind($this->outputStream);
+    $result = stream_get_contents($this->outputStream);
+
+    $expected = "\033[1mName                  \033[0m\033[1mSurname           \033[0m\033[1mCity\033[0m" . PHP_EOL;
+    $expected .= "Wolfgang Amadeus      \033[0mMozart            \033[0mVienna\033[0m" . PHP_EOL;
+    $expected .= "Ludwig                \033[0mvan Beethoven     \033[0mBonn\033[0m" . PHP_EOL;
+    $expected .= "Sergej Vasil'Evic     \033[0mRachmaninoff      \033[0mMoscow\033[0m" . PHP_EOL;
+    $expected .= PHP_EOL;
+    $expected .= "Vincenzo              \033[0mBellini           \033[0mCatania\033[0m" . PHP_EOL;
+    $expected .= "\033[0m" . PHP_EOL;
 
     expect($result)->toEqual($expected);
 });
@@ -112,13 +129,17 @@ it('customizes padding size', function () {
         row(["Vincenzo", "Bellini", "Catania"])
     );
     $this->table->setPadding(10);
-    $result = $this->table->build();
+    $this->table->render();
 
-    $expected = "{bold}Name                       {clear}{bold}Surname                {clear}{bold}City{clear}{nl}";
-    $expected .= "Wolfgang Amadeus           {clear}Mozart                 {clear}Vienna{clear}{nl}";
-    $expected .= "Ludwig                     {clear}van Beethoven          {clear}Bonn{clear}{nl}";
-    $expected .= "Sergej Vasil'Evic          {clear}Rachmaninoff           {clear}Moscow{clear}{nl}";
-    $expected .= "Vincenzo                   {clear}Bellini                {clear}Catania{clear}{nl}";
+    rewind($this->outputStream);
+    $result = stream_get_contents($this->outputStream);
+
+    $expected = "\033[1mName                       \033[0m\033[1mSurname                \033[0m\033[1mCity\033[0m" . PHP_EOL;
+    $expected .= "Wolfgang Amadeus           \033[0mMozart                 \033[0mVienna\033[0m" . PHP_EOL;
+    $expected .= "Ludwig                     \033[0mvan Beethoven          \033[0mBonn\033[0m" . PHP_EOL;
+    $expected .= "Sergej Vasil'Evic          \033[0mRachmaninoff           \033[0mMoscow\033[0m" . PHP_EOL;
+    $expected .= "Vincenzo                   \033[0mBellini                \033[0mCatania\033[0m" . PHP_EOL;
+    $expected .= "\033[0m" . PHP_EOL;
 
     expect($result)->toEqual($expected);
 });
@@ -132,13 +153,17 @@ it('customizes padding character', function () {
         row(["Vincenzo", "Bellini", "Catania"])
     );
     $this->table->setPaddingCharacter('.');
-    $result = $this->table->build();
+    $this->table->render();
 
-    $expected = "{bold}Name..................{clear}{bold}Surname...........{clear}{bold}City{clear}{nl}";
-    $expected .= "Wolfgang Amadeus......{clear}Mozart............{clear}Vienna{clear}{nl}";
-    $expected .= "Ludwig................{clear}van Beethoven.....{clear}Bonn{clear}{nl}";
-    $expected .= "Sergej Vasil'Evic.....{clear}Rachmaninoff......{clear}Moscow{clear}{nl}";
-    $expected .= "Vincenzo..............{clear}Bellini...........{clear}Catania{clear}{nl}";
+    rewind($this->outputStream);
+    $result = stream_get_contents($this->outputStream);
+
+    $expected = "\033[1mName..................\033[0m\033[1mSurname...........\033[0m\033[1mCity\033[0m" . PHP_EOL;
+    $expected .= "Wolfgang Amadeus......\033[0mMozart............\033[0mVienna\033[0m" . PHP_EOL;
+    $expected .= "Ludwig................\033[0mvan Beethoven.....\033[0mBonn\033[0m" . PHP_EOL;
+    $expected .= "Sergej Vasil'Evic.....\033[0mRachmaninoff......\033[0mMoscow\033[0m" . PHP_EOL;
+    $expected .= "Vincenzo..............\033[0mBellini...........\033[0mCatania\033[0m" . PHP_EOL;
+    $expected .= "\033[0m" . PHP_EOL;
 
     expect($result)->toEqual($expected);
 });
@@ -154,13 +179,17 @@ it('customizes table rows', function () {
         row(["Sergej Vasil'Evic", "Rachmaninoff", "Moscow"], 'rowAlt'),
         row(["Vincenzo", "Bellini", "Catania"])
     );
-    $result = $this->table->build();
+    $this->table->render();
 
-    $expected = "{bg_green}{bold}Name                  {clear}{bg_green}{bold}Surname           {clear}{bg_green}{bold}City{clear}{nl}";
-    $expected .= "{bg_white_bright}Wolfgang Amadeus      {clear}{bg_white_bright}Mozart            {clear}{bg_white_bright}Vienna{clear}{nl}";
-    $expected .= "{bg_white}Ludwig                {clear}{bg_white}van Beethoven     {clear}{bg_white}Bonn{clear}{nl}";
-    $expected .= "{bg_white_bright}Sergej Vasil'Evic     {clear}{bg_white_bright}Rachmaninoff      {clear}{bg_white_bright}Moscow{clear}{nl}";
-    $expected .= "{bg_white}Vincenzo              {clear}{bg_white}Bellini           {clear}{bg_white}Catania{clear}{nl}";
+    rewind($this->outputStream);
+    $result = stream_get_contents($this->outputStream);
+
+    $expected = "\033[42m\033[1mName                  \033[0m\033[42m\033[1mSurname           \033[0m\033[42m\033[1mCity\033[0m" . PHP_EOL;
+    $expected .= "\033[107mWolfgang Amadeus      \033[0m\033[107mMozart            \033[0m\033[107mVienna\033[0m" . PHP_EOL;
+    $expected .= "\033[47mLudwig                \033[0m\033[47mvan Beethoven     \033[0m\033[47mBonn\033[0m" . PHP_EOL;
+    $expected .= "\033[107mSergej Vasil'Evic     \033[0m\033[107mRachmaninoff      \033[0m\033[107mMoscow\033[0m" . PHP_EOL;
+    $expected .= "\033[47mVincenzo              \033[0m\033[47mBellini           \033[0m\033[47mCatania\033[0m" . PHP_EOL;
+    $expected .= "\033[0m" . PHP_EOL;
 
     expect($result)->toEqual($expected);
 });
@@ -173,13 +202,17 @@ it('returns a table with style applied to rows and columns', function () {
         row([col("Sergej Vasil'Evic", 'heading'), "Rachmaninoff", "Moscow"]),
         row([col("Vincenzo", 'heading'), "Bellini", "Catania"])
     );
-    $result = $this->table->build();
+    $this->table->render();
 
-    $expected = "{bold}Name                  {clear}{bold}Surname           {clear}{bold}City{clear}{nl}";
-    $expected .= "{bold}Wolfgang Amadeus      {clear}Mozart            {clear}Vienna{clear}{nl}";
-    $expected .= "{bold}Ludwig                {clear}van Beethoven     {clear}Bonn{clear}{nl}";
-    $expected .= "{bold}Sergej Vasil'Evic     {clear}Rachmaninoff      {clear}Moscow{clear}{nl}";
-    $expected .= "{bold}Vincenzo              {clear}Bellini           {clear}Catania{clear}{nl}";
+    rewind($this->outputStream);
+    $result = stream_get_contents($this->outputStream);
+
+    $expected = "\033[1mName                  \033[0m\033[1mSurname           \033[0m\033[1mCity\033[0m" . PHP_EOL;
+    $expected .= "\033[1mWolfgang Amadeus      \033[0mMozart            \033[0mVienna\033[0m" . PHP_EOL;
+    $expected .= "\033[1mLudwig                \033[0mvan Beethoven     \033[0mBonn\033[0m" . PHP_EOL;
+    $expected .= "\033[1mSergej Vasil'Evic     \033[0mRachmaninoff      \033[0mMoscow\033[0m" . PHP_EOL;
+    $expected .= "\033[1mVincenzo              \033[0mBellini           \033[0mCatania\033[0m" . PHP_EOL;
+    $expected .= "\033[0m" . PHP_EOL;
 
     expect($result)->toEqual($expected);
 });
@@ -196,17 +229,21 @@ it('returns a table with a separator', function () {
         [],
         row(["Vincenzo", "Bellini", "Catania"])
     );
-    $result = $this->table->build();
+    $this->table->render();
 
-    $expected = "{bold}Name                  {clear}{bold}Surname           {clear}{bold}City{clear}{nl}";
-    $expected .= "{nl}";
-    $expected .= "Wolfgang Amadeus      {clear}Mozart            {clear}Vienna{clear}{nl}";
-    $expected .= "{nl}";
-    $expected .= "Ludwig                {clear}van Beethoven     {clear}Bonn{clear}{nl}";
-    $expected .= "{nl}";
-    $expected .= "Sergej Vasil'Evic     {clear}Rachmaninoff      {clear}Moscow{clear}{nl}";
-    $expected .= "{nl}";
-    $expected .= "Vincenzo              {clear}Bellini           {clear}Catania{clear}{nl}";
+    rewind($this->outputStream);
+    $result = stream_get_contents($this->outputStream);
+
+    $expected = "\033[1mName                  \033[0m\033[1mSurname           \033[0m\033[1mCity\033[0m" . PHP_EOL;
+    $expected .= PHP_EOL;
+    $expected .= "Wolfgang Amadeus      \033[0mMozart            \033[0mVienna\033[0m" . PHP_EOL;
+    $expected .= PHP_EOL;
+    $expected .= "Ludwig                \033[0mvan Beethoven     \033[0mBonn\033[0m" . PHP_EOL;
+    $expected .= PHP_EOL;
+    $expected .= "Sergej Vasil'Evic     \033[0mRachmaninoff      \033[0mMoscow\033[0m" . PHP_EOL;
+    $expected .= PHP_EOL;
+    $expected .= "Vincenzo              \033[0mBellini           \033[0mCatania\033[0m" . PHP_EOL;
+    $expected .= "\033[0m" . PHP_EOL;
 
     expect($result)->toEqual($expected);
 });
