@@ -46,3 +46,30 @@ it('moves the cursor left x columns', function (int $columns) {
 
     expect($result)->toBe("\033[{$columns}D");
 })->with([1, 6, 12]);
+
+it('moves the cursor to a specific column', function (int $column) {
+    $this->cursor->moveToColumn($column);
+
+    rewind($this->outputStream);
+    $result = stream_get_contents($this->outputStream);
+
+    expect($result)->toBe("\033[{$column}G");
+})->with([5, 10, 20]);
+
+it('clears the current line', function () {
+    $this->cursor->clearLine();
+
+    rewind($this->outputStream);
+    $result = stream_get_contents($this->outputStream);
+
+    expect($result)->toBe("\033[2K");
+});
+
+it('clears the entire screen', function () {
+    $this->cursor->clearScreen();
+
+    rewind($this->outputStream);
+    $result = stream_get_contents($this->outputStream);
+
+    expect($result)->toBe("\033[2J");
+});
