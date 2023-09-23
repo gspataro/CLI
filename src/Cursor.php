@@ -72,4 +72,44 @@ final class Cursor
 
         return $this;
     }
+
+    /**
+     * Move cursor to specific column
+     *
+     * @param int $column
+     * @return static
+     */
+
+    public function moveToColumn(int $column): static
+    {
+        $this->output->print("\033[{$column}G", false, false);
+
+        return $this;
+    }
+
+    /**
+     * Erase the line at current cursor position
+     *
+     * @return static
+     */
+
+    public function clearLine(): static
+    {
+        $this->output->print("\033[2K", false, false);
+
+        return $this;
+    }
+
+    /**
+     * Erase the entire screen
+     *
+     * @return static
+     */
+
+    public function clearScreen(): static
+    {
+        $this->output->print("\033[2J", false, false);
+
+        return $this;
+    }
 }
