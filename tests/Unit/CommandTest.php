@@ -5,7 +5,6 @@ use GSpataro\CLI\Output;
 use GSpataro\CLI\Command;
 use GSpataro\CLI\Exception\InvalidCommandOptionsDefinitionException;
 use Tests\Utilities\Controller;
-use Tests\Utilities\FakeStream;
 
 uses(\Tests\TestCase::class)->group('core', 'command');
 
