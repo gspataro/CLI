@@ -7,12 +7,15 @@ uses()->group('helpers');
 it('returns a valid step', function () {
     $stopwatch = new Stopwatch();
     $startTime = $stopwatch->start();
+    usleep(1000);
 
     $firstStep = $stopwatch->step();
     expect($firstStep)
         ->toBeFloat()
         ->not->toBe(0.0)
         ->not->toBe($startTime);
+
+    usleep(1000);
 
     $secondStep = $stopwatch->step();
     expect($secondStep)
@@ -25,6 +28,8 @@ it('returns a valid step', function () {
 it('stops', function () {
     $stopwatch = new Stopwatch();
     $startTime = $stopwatch->start();
+
+    usleep(1000);
 
     $endTime = $stopwatch->stop();
     expect($endTime)
